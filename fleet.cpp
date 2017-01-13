@@ -23,9 +23,9 @@
 //    declared in fleet.h 
 //---------------------------------------------------------------------------------
 
-const char* shipNames[SHIP_SIZE_ARRAYSIZE] = 
-	{"No Ship", "Mine Sweeper", "Submarine", "Frigate",
-		"Battleship", "Aircraft Carrier"};
+const char* shipNames[SHIP_SIZE_ARRAYSIZE] =
+{ "No Ship", "Mine Sweeper", "Submarine", "Frigate",
+	"Battleship", "Aircraft Carrier" };
 const int TOTALPIECES = 17; // total pieces in all ships
 
 //---------------------------------------------------------------------------------
@@ -62,8 +62,8 @@ const int TOTALPIECES = 17; // total pieces in all ships
 void setShipInfo(ShipInfo * shipInfoPtr, Ship name, Direction orientation,
 	unsigned short row, unsigned short col)
 {
-	
-} 
+
+}
 
 //---------------------------------------------------------------------------------
 // Function:	allocMem()
@@ -102,24 +102,24 @@ void allocMem(Player players[], char size)
 
 	try
 	{
-		for(short i = 0; i < NUMPLAYERS; ++i)
+		for (short i = 0; i < NUMPLAYERS; ++i)
 		{
 			players[i].m_gameGrid[0] = nullptr;
 			players[i].m_gameGrid[0] = new Ship*[numberOfRows];
 			players[i].m_gameGrid[1] = nullptr;
 			players[i].m_gameGrid[1] = new Ship*[numberOfRows];
-			for(short j = 0; j < numberOfRows; ++j)
+			for (short j = 0; j < numberOfRows; ++j)
 			{
-			//-------------------------------------------------
-			// set the pointers to NULL, then allocate the
-			// memory for each row in each grid
-			//--------------------------------------------------
+				//-------------------------------------------------
+				// set the pointers to NULL, then allocate the
+				// memory for each row in each grid
+				//--------------------------------------------------
 				players[i].m_gameGrid[0][j] = nullptr;
 				players[i].m_gameGrid[0][j] = new Ship[numberOfCols];
 				players[i].m_gameGrid[1][j] = nullptr;
 				players[i].m_gameGrid[1][j] = new Ship[numberOfCols];
 
-				for(short k = 0; k < numberOfCols; ++k)
+				for (short k = 0; k < numberOfCols; ++k)
 				{
 					players[i].m_gameGrid[0][j][k] = NOSHIP;
 					players[i].m_gameGrid[1][j][k] = NOSHIP;
@@ -127,7 +127,7 @@ void allocMem(Player players[], char size)
 			} // end for j
 		} // end for i
 	}
-	catch(exception e)
+	catch (exception e)
 	{
 		deleteMem(players, size);
 		cerr << "exception: " << e.what() << endl;
@@ -165,7 +165,7 @@ void allocMem(Player players[], char size)
 //		12/20/05 PB completed v 0.1
 //   
 //---------------------------------------------------------------------------------
-void deleteMem(Player players[], char size) 
+void deleteMem(Player players[], char size)
 {
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	// your code goes here ...
@@ -205,29 +205,29 @@ void deleteMem(Player players[], char size)
 //     
 //---------------------------------------------------------------------------------
 void printShip(ostream & sout, Ship thisShip)
-{	
-	sout << ' ' ;
-	switch(thisShip)
+{
+	sout << ' ';
+	switch (thisShip)
 	{
-		case NOSHIP: sout << ' ';
-			break;
-		case MINESWEEPER: sout << 'M';
-			break;
-		case SUB: sout << 'S';
-			break;
-		case FRIGATE: sout << 'F';
-			break;
-		case BATTLESHIP: sout << 'B';
-			break;
-		case CARRIER: sout << 'C';
-			break;
-		case HIT: sout << 'H';
-			break;
-		case MISSED: sout << MISS;
-			break;
-		default: sout << 'X';
+	case NOSHIP: sout << ' ';
+		break;
+	case MINESWEEPER: sout << 'M';
+		break;
+	case SUB: sout << 'S';
+		break;
+	case FRIGATE: sout << 'F';
+		break;
+	case BATTLESHIP: sout << 'B';
+		break;
+	case CARRIER: sout << 'C';
+		break;
+	case HIT: sout << 'H';
+		break;
+	case MISSED: sout << MISS;
+		break;
+	default: sout << 'X';
 	}
-	sout << VERT ;
+	sout << VERT;
 }
 
 //---------------------------------------------------------------------------------
@@ -269,28 +269,43 @@ void printGrid(ostream& sout, Ship** grid, char size)
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
-	for(short j = 1; j <= numberOfCols; ++j)
+	for (short j = 1; j <= numberOfCols; ++j)
 		sout << setw(3) << j;
-	sout  << endl;
+	sout << endl;
 	for (char k = 65; k <= numberOfRows + 64; ++k)
 	{
-		sout << k << NOSHIP << endl;
-		if (timesThrough = 0)
+		sout << k;
+
+		for (int i = 0; i < numberOfCols; ++i)
 		{
-			sout << HORIZ << HORIZ << HORIZ << CR << endl;
-			timesThrough++;
+			printShip(sout, NOSHIP);
 		}
-		else
+		sout << endl;
+
+		//
+
+		sout << HORIZ << HORIZ << HORIZ << CR;
+		for (int l = 0; l < numberOfCols; ++l)
 		{
-			sout << HORIZ << HORIZ << CR << endl;
+			if (timesThrough == 0)
+			{
+				timesThrough++;
+			}
+			else
+			{
+				sout << HORIZ << HORIZ << CR;
+			}
 		}
+		sout << endl;
+
+		timesThrough = 0;
 	}
 	// use printShip for each element in the grid
 
 	//mgridsub0or1
 
 
-} 
+}
 
 //---------------------------------------------------------------------------------
 // Function:	initializePlayer()
@@ -321,10 +336,10 @@ void printGrid(ostream& sout, Ship** grid, char size)
 //---------------------------------------------------------------------------------
 void initializePlayer(Player* playerPtr)
 {
-	for(short i = 0; i < SHIP_SIZE_ARRAYSIZE; i++)
+	for (short i = 0; i < SHIP_SIZE_ARRAYSIZE; i++)
 		setShipInfo(playerPtr->m_ships + i, static_cast<Ship>(i));
-	
-	playerPtr->m_piecesLeft = TOTALPIECES; 
+
+	playerPtr->m_piecesLeft = TOTALPIECES;
 }
 
 //---------------------------------------------------------------------------------
@@ -370,15 +385,15 @@ void setships(Player players[], char size, short whichPlayer)
 	char ok = 'Y';
 	char save = 'N';
 	ostringstream outSStream;
-	Cell location = {0, 0};
-	for(short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
+	Cell location = { 0, 0 };
+	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
 	{
 		system("cls");
 		printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
 		outSStream.str("");
 		outSStream << "Player " << whichPlayer + 1 << " Enter "
 			<< shipNames[j] << " orientation";
-		input =  safeChoice(outSStream.str(), 'V', 'H');
+		input = safeChoice(outSStream.str(), 'V', 'H');
 		players[whichPlayer].m_ships[j].m_orientation
 			= (input == 'V') ? VERTICAL : HORIZONTAL;
 		cout << "Player " << whichPlayer + 1 << " Enter " << shipNames[j] <<
@@ -386,9 +401,9 @@ void setships(Player players[], char size, short whichPlayer)
 		players[whichPlayer].m_ships[j].m_bowLocation = getCoord(cin, size);
 
 		// if ok
-		if(!validLocation(players[whichPlayer], j, size))
+		if (!validLocation(players[whichPlayer], j, size))
 		{
-			cout << "invalid location. Press <enter>" ;
+			cout << "invalid location. Press <enter>";
 			cin.get();
 			j--; // redo
 			continue;
@@ -400,7 +415,7 @@ void setships(Player players[], char size, short whichPlayer)
 
 	} // end for j
 	save = safeChoice("\nSave starting grid?", 'Y', 'N');
-	if(save == 'Y')
+	if (save == 'Y')
 		saveGrid(players, whichPlayer, size);
 }
 
@@ -438,9 +453,9 @@ void setships(Player players[], char size, short whichPlayer)
 void saveGrid(Player players[], short whichPlayer, char size)
 {
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
-	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;	
+	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 	// your code goes here ...
-	
+
 }
 
 //---------------------------------------------------------------------------------
@@ -484,7 +499,7 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName)
 	string line;
 	ifstream ifs;
 	Ship ship = NOSHIP;
-	short shipCount[SHIP_SIZE_ARRAYSIZE] = {0};
+	short shipCount[SHIP_SIZE_ARRAYSIZE] = { 0 };
 	char cell = ' ';
 	char fsize = 'S';
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
@@ -493,7 +508,7 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName)
 	try
 	{
 		ifs.open(fileName.c_str());
-		if(!ifs)
+		if (!ifs)
 		{
 			cout << "could not open file " << fileName << endl
 				<< " press <enter> to continue" << endl;
@@ -501,15 +516,15 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName)
 			return false;
 		}
 	}
-	catch(exception e)
+	catch (exception e)
 	{
 		cout << "could not open file " << fileName << endl
 			<< " press <enter> to continue" << endl;
 		cin.ignore(BUFFER_SIZE, '\n');
 		return false;
-	}	
+	}
 	// your code goes here ...
-	
+
 
 	return true;
 }
@@ -552,27 +567,26 @@ Cell getCoord(istream& sin, char size)
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 	char highChar = static_cast<char>(numberOfRows - 1) + 'A';
-	char row  = 'A';
+	char row = 'A';
 	short col = 0;
-	Cell location = {0, 0};
+	Cell location = { 0, 0 };
 	do
 	{
 		col = 0;
-		cout << "Row must be a letter from A to " << highChar 
-			<< " and column must be  from 1 to "  << numberOfCols << ": ";
-		while((row = toupper(sin.get())) < 'A' || row  > highChar)
+		cout << "Row must be a letter from A to " << highChar
+			<< " and column must be  from 1 to " << numberOfCols << ": ";
+		while ((row = toupper(sin.get())) < 'A' || row > highChar)
 		{
 			sin.ignore(BUFFER_SIZE, '\n');
-			cout << "Row must be a letter from A to " << highChar 
-				<< " and column must be  from 1 to "  << numberOfCols << ": ";
+			cout << "Row must be a letter from A to " << highChar
+				<< " and column must be  from 1 to " << numberOfCols << ": ";
 		}
 		sin >> col;
-		if(!sin)
+		if (!sin)
 			sin.clear();
 		sin.ignore(BUFFER_SIZE, '\n');
-	}
-	while(col < 1 || col > numberOfCols);
-	
+	} while (col < 1 || col > numberOfCols);
+
 	location.m_col = col - 1;
 	location.m_row = static_cast<short>(row - 'A');
 	return location;
@@ -659,7 +673,7 @@ void header(ostream& sout)
 	const string by("Edmonds Community College CS 132");
 	boxTop(sout, BOXWIDTH);
 	boxLine(sout, empty, BOXWIDTH);
-	boxLine(sout, sink , BOXWIDTH, 'C');
+	boxLine(sout, sink, BOXWIDTH, 'C');
 	boxLine(sout, empty, BOXWIDTH);
 	boxLine(sout, by, BOXWIDTH, 'C');
 	boxLine(sout, empty, BOXWIDTH);
@@ -704,7 +718,7 @@ void endBox(short player)
 	msg << "Congratulations player " << player + 1 << "!";
 	boxTop(cout, BOXWIDTH);
 	boxLine(cout, empty, BOXWIDTH);
-	boxLine(cout, msg.str() , BOXWIDTH, 'C');
+	boxLine(cout, msg.str(), BOXWIDTH, 'C');
 	boxLine(cout, empty, BOXWIDTH);
 	boxBottom(cout, BOXWIDTH);
 }
