@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------
 // File:	fleet.cpp
 // 
 // Functions: 
@@ -111,12 +111,14 @@ void allocMem(Player players[], char size)
 			for(short j = 0; j < numberOfRows; ++j)
 			{
 			//-------------------------------------------------
-			//	your code goes here ...
 			// set the pointers to NULL, then allocate the
 			// memory for each row in each grid
-
-
 			//--------------------------------------------------
+				players[i].m_gameGrid[0][j] = nullptr;
+				players[i].m_gameGrid[0][j] = new Ship[numberOfCols];
+				players[i].m_gameGrid[1][j] = nullptr;
+				players[i].m_gameGrid[1][j] = new Ship[numberOfCols];
+
 				for(short k = 0; k < numberOfCols; ++k)
 				{
 					players[i].m_gameGrid[0][j][k] = NOSHIP;
@@ -263,14 +265,29 @@ void printShip(ostream & sout, Ship thisShip)
 //---------------------------------------------------------------------------------
 void printGrid(ostream& sout, Ship** grid, char size)
 {
+	int timesThrough = 0;
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
 	for(short j = 1; j <= numberOfCols; ++j)
 		sout << setw(3) << j;
 	sout  << endl;
-	// your code goes here ...
+	for (char k = 65; k <= numberOfRows + 64; ++k)
+	{
+		sout << k << NOSHIP << endl;
+		if (timesThrough = 0)
+		{
+			sout << HORIZ << HORIZ << HORIZ << CR << endl;
+			timesThrough++;
+		}
+		else
+		{
+			sout << HORIZ << HORIZ << CR << endl;
+		}
+	}
 	// use printShip for each element in the grid
+
+	//mgridsub0or1
 
 
 } 
