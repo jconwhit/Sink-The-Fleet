@@ -25,40 +25,40 @@
 
 const char* shipNames[SHIP_SIZE_ARRAYSIZE] =
 { "No Ship", "Mine Sweeper", "Submarine", "Frigate",
-	"Battleship", "Aircraft Carrier" };
+"Battleship", "Aircraft Carrier" };
 const int TOTALPIECES = 17; // total pieces in all ships
 
-//---------------------------------------------------------------------------------
-// Function:	setShipInfo()
-// Title:		Set ShipInfo
-// Description:
-//		Sets struct ShipInfo fields
-// Programmer:
-// 
-// Date:	12/20/05
-//
-// Version:	0.1
-// 
-// Environment: Intel Xeon PC 
-//                Software:   MS Windows 7 for execution; 
-//                Compiles under Microsoft Visual C++.Net 2013
-//
-// Calls:
-//
-// Called By:
-//
-// Parameters:	shipInfoPtr: ShipInfo *; pointer to the ShipInfo to be set
-//				name: Ship;	enumerated name of type of ship; default: NOSHIP
-//				orientation: Direction;	enumerated direction; default: HORIZONTAL
-//				row: unsigned short; row-coordinate in grid; default: 0
-//				col: unsigned short; column-coordinate in grid; default: 0
-// 
-// Returns:	void
-//
-// History Log:
-//		12/20/05 PB completed v 0.1
-//   
-//---------------------------------------------------------------------------------
+							//---------------------------------------------------------------------------------
+							// Function:	setShipInfo()
+							// Title:		Set ShipInfo
+							// Description:
+							//		Sets struct ShipInfo fields
+							// Programmer:
+							// 
+							// Date:	12/20/05
+							//
+							// Version:	0.1
+							// 
+							// Environment: Intel Xeon PC 
+							//                Software:   MS Windows 7 for execution; 
+							//                Compiles under Microsoft Visual C++.Net 2013
+							//
+							// Calls:
+							//
+							// Called By:
+							//
+							// Parameters:	shipInfoPtr: ShipInfo *; pointer to the ShipInfo to be set
+							//				name: Ship;	enumerated name of type of ship; default: NOSHIP
+							//				orientation: Direction;	enumerated direction; default: HORIZONTAL
+							//				row: unsigned short; row-coordinate in grid; default: 0
+							//				col: unsigned short; column-coordinate in grid; default: 0
+							// 
+							// Returns:	void
+							//
+							// History Log:
+							//		12/20/05 PB completed v 0.1
+							//   
+							//---------------------------------------------------------------------------------
 void setShipInfo(ShipInfo * shipInfoPtr, Ship name, Direction orientation,
 	unsigned short row, unsigned short col)
 {
@@ -269,41 +269,40 @@ void printGrid(ostream& sout, Ship** grid, char size)
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
+	system("cls");
+
 	for (short j = 1; j <= numberOfCols; ++j)
 		sout << setw(3) << j;
 	sout << endl;
-	for (char k = 65; k <= numberOfRows + 64; ++k)
+
+	//print rows beginning with char a-j
+	int alphaChar = 65;
+	for (int i = 0; i < numberOfRows; i++)
 	{
-		sout << k;
+		sout << (char)alphaChar++; //print alpha character at start of every other row
 
-		for (int i = 0; i < numberOfCols; ++i)
+		//print out each cell in the grid.
+		for (int l = 0; l < numberOfCols; l++)
 		{
-			printShip(sout, NOSHIP);
+			printShip(sout, grid[i][l]);
 		}
+
+		//start a new line
 		sout << endl;
 
-		//
+		//print out the extra horizontal line
+		sout << HORIZ;
 
-		sout << HORIZ << HORIZ << HORIZ << CR;
-		for (int l = 0; l < numberOfCols; ++l)
+		// regular line w/ no data
+		for (int k = 0; k < numberOfCols; k++)
 		{
-			if (timesThrough == 0)
-			{
-				timesThrough++;
-			}
-			else
-			{
-				sout << HORIZ << HORIZ << CR;
-			}
+			sout << HORIZ << HORIZ << CR;
 		}
+
+		//start new line
 		sout << endl;
 
-		timesThrough = 0;
 	}
-	// use printShip for each element in the grid
-
-	//mgridsub0or1
-
 
 }
 
@@ -722,4 +721,3 @@ void endBox(short player)
 	boxLine(cout, empty, BOXWIDTH);
 	boxBottom(cout, BOXWIDTH);
 }
-

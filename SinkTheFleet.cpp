@@ -62,12 +62,12 @@ int main(void)
 	short whichPlayer = 0;
 	bool gameOver = false;
 	bool reshot = false;
-	Cell coord = {0, 0};
+	Cell coord = { 0, 0 };
 	string message;
 	string filename;
 	Ship shipHit = NOSHIP;
-	Player game[NUMPLAYERS] ;	// the two players in an array
-	// other stuff ...
+	Player game[NUMPLAYERS];	// the two players in an array
+								// other stuff ...
 
 	do
 	{
@@ -75,8 +75,8 @@ int main(void)
 		cout << endl;
 		header(cout);
 		gridSize = safeChoice("Which size grid to you want to use", 'S', 'L');
-		
-		if( gridSize == 'L')
+
+		if (gridSize == 'L')
 		{
 			numRows = LARGEROWS;
 			numCols = LARGECOLS;
@@ -86,21 +86,21 @@ int main(void)
 			numRows = SMALLROWS;
 			numCols = SMALLCOLS;
 		}
-		initializePlayer(game);		
+		initializePlayer(game);
 		initializePlayer(game + 1);
 		// dynamically create the rows of the array
 		allocMem(game, gridSize);
-		
+
 		// ... your code goes here
 
-		for(whichPlayer = 0; whichPlayer < NUMPLAYERS; whichPlayer++)
+		for (whichPlayer = 0; whichPlayer < NUMPLAYERS; whichPlayer++)
 		{
-			if (whichPlayer = 0)
+			if (whichPlayer == 0)
 			{
 				readFromFileChoice = safeChoice("Player 1, Would you like to read starting grid from a file? (Y/N):", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
-					setships(&game[NUMPLAYERS], gridSize, whichPlayer);
+					setships(game, gridSize, whichPlayer);
 				}
 				else if (readFromFileChoice == 'Y')
 				{
@@ -108,7 +108,7 @@ int main(void)
 					//code
 				}
 			}
-			else if (whichPlayer = 1)
+			else if (whichPlayer == 1)
 			{
 				readFromFileChoice = safeChoice("Player 2, Would you like to read starting grid from a file? (Y/N):", 'Y', 'N');
 				if (readFromFileChoice == 'N')
@@ -125,17 +125,16 @@ int main(void)
 
 		}
 		whichPlayer = 0;
-		while(!gameOver)
+		while (!gameOver)
 		{
-		// ... a lot more stuff ...
+			// ... a lot more stuff ...
 
 
 			whichPlayer = !whichPlayer;  // switch players
 		}
 
 		again = safeChoice("Would you like to play again?", 'Y', 'N');
-	}
-	while(again == 'Y');
+	} while (again == 'Y');
 
 	return EXIT_SUCCESS;
-} 
+}
