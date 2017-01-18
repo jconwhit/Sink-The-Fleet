@@ -433,8 +433,6 @@ void setships(Player players[], char size, short whichPlayer)
 			//i++;
 		}
 
-
-
 	} // end for j
 	save = safeChoice("\nSave starting grid?", 'Y', 'N');
 	if (save == 'Y')
@@ -475,6 +473,7 @@ void setships(Player players[], char size, short whichPlayer)
 void saveGrid(Player players[], short whichPlayer, char size)
 {
 	ofstream out_file_handle;
+	string size_str = "";
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
@@ -483,8 +482,28 @@ void saveGrid(Player players[], short whichPlayer, char size)
 	char filename[13] = { "Player _.txt" };
 	filename[7] = which_player;
 
+	size_str = (toupper(size) == 'L') ? "Large Grid" : "Small Grid";
+
 	out_file_handle.open(filename);
-	out_file_handle << "It worked";
+	out_file_handle << size_str << endl;
+	for (short rows = 0; rows < numberOfRows; rows++)
+	{
+		for (short cols = 0; cols < numberOfCols; cols++)
+		{
+			out_file_handle << players[whichPlayer].m_gameGrid[0][rows][cols];
+		}
+		out_file_handle << endl;
+	}
+	out_file_handle << endl;
+	for (short rows = 0; rows < numberOfRows; rows++)
+	{
+		for (short cols = 0; cols < numberOfCols; cols++)
+		{
+			out_file_handle << players[whichPlayer].m_gameGrid[1][rows][cols];
+		}
+		out_file_handle << endl;
+	}
+	out_file_handle << endl;
 	out_file_handle.close();
 
 }
@@ -662,16 +681,38 @@ bool validLocation(const Player& player, short shipNumber, char size)
 	Ship ship_type = static_cast<Ship>(shipNumber);
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
-	
-	if (size == 'L')
+
+	if ((location.m_col <= (numberOfCols - shipSize[shipNumber])) & (location.m_row <= (numberOfRows - shipSize[shipNumber])))
 	{
-		if ((location.m_col > LARGECOLS - ship_type) & (location.m_row > LARGEROWS - ship_type))
-			r_val = true;
+		r_val = true;
 	}
-	else
+
+	if (r_val == true)
 	{
-		if ((location.m_col > SMALLCOLS - ship_type) & (location.m_row > SMALLROWS - ship_type))
-			r_val = true;
+		if (player.m_ships[shipNumber].m_orientation == VERTICAL) 
+		{
+			for (short i = 0; i < ship_type; i++)
+			{
+				if (!player.m_gameGrid[0][location.m_row + i][location.m_col] == NOSHIP)
+				{
+					return false;
+				}
+			}
+		}
+		else if (player.m_ships[shipNumber].m_orientation == HORIZONTAL) 
+		{
+			for (short i = 0; i < ship_type; i++)
+			{
+				if (!player.m_gameGrid[0][location.m_row][location.m_col + i] == NOSHIP)
+				{
+					return false;
+				}
+			}
+		}
+		else
+		{
+
+		}
 	}
 
 	return r_val;
