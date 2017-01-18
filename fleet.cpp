@@ -28,37 +28,37 @@ const char* shipNames[SHIP_SIZE_ARRAYSIZE] =
 "Battleship", "Aircraft Carrier" };
 const int TOTALPIECES = 17; // total pieces in all ships
 
-//---------------------------------------------------------------------------------
-// Function:	setShipInfo()
-// Title:		Set ShipInfo
-// Description:
-//		Sets struct ShipInfo fields
-// Programmer:
-// 
-// Date:	12/20/05
-//
-// Version:	0.1
-// 
-// Environment: Intel Xeon PC 
-//                Software:   MS Windows 7 for execution; 
-//                Compiles under Microsoft Visual C++.Net 2013
-//
-// Calls:
-//
-// Called By:
-//
-// Parameters:	shipInfoPtr: ShipInfo *; pointer to the ShipInfo to be set
-//				name: Ship;	enumerated name of type of ship; default: NOSHIP
-//				orientation: Direction;	enumerated direction; default: HORIZONTAL
-//				row: unsigned short; row-coordinate in grid; default: 0
-//				col: unsigned short; column-coordinate in grid; default: 0
-// 
-// Returns:	void
-//
-// History Log:
-//		12/20/05 PB completed v 0.1
-//   
-//---------------------------------------------------------------------------------
+							//---------------------------------------------------------------------------------
+							// Function:	setShipInfo()
+							// Title:		Set ShipInfo
+							// Description:
+							//		Sets struct ShipInfo fields
+							// Programmer:
+							// 
+							// Date:	12/20/05
+							//
+							// Version:	0.1
+							// 
+							// Environment: Intel Xeon PC 
+							//                Software:   MS Windows 7 for execution; 
+							//                Compiles under Microsoft Visual C++.Net 2013
+							//
+							// Calls:
+							//
+							// Called By:
+							//
+							// Parameters:	shipInfoPtr: ShipInfo *; pointer to the ShipInfo to be set
+							//				name: Ship;	enumerated name of type of ship; default: NOSHIP
+							//				orientation: Direction;	enumerated direction; default: HORIZONTAL
+							//				row: unsigned short; row-coordinate in grid; default: 0
+							//				col: unsigned short; column-coordinate in grid; default: 0
+							// 
+							// Returns:	void
+							//
+							// History Log:
+							//		12/20/05 PB completed v 0.1
+							//   
+							//---------------------------------------------------------------------------------
 void setShipInfo(ShipInfo * shipInfoPtr, Ship name, Direction orientation,
 	unsigned short row, unsigned short col)
 {
@@ -281,7 +281,7 @@ void printGrid(ostream& sout, Ship** grid, char size)
 	{
 		sout << (char)alphaChar++; //print alpha character at start of every other row
 
-		//print out each cell in the grid.
+								   //print out each cell in the grid.
 		for (int l = 0; l < numberOfCols; l++)
 		{
 			printShip(sout, grid[i][l]);
@@ -385,6 +385,7 @@ void setships(Player players[], char size, short whichPlayer)
 	char input = 'V';
 	char ok = 'Y';
 	char save = 'N';
+	Ship ship_type;
 	ostringstream outSStream;
 	Cell location = { 0, 0 };
 	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
@@ -409,8 +410,28 @@ void setships(Player players[], char size, short whichPlayer)
 			j--; // redo
 			continue;
 		}
-		// your code goes here ...
+		location = players[whichPlayer].m_ships[j].m_bowLocation;
+		ship_type = static_cast<Ship>(j);
+		players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = ship_type;
 
+		//const int SHIP_SIZE_ARRAYSIZE = 6; // size of the shipSize array
+		//const short shipSize[SHIP_SIZE_ARRAYSIZE] = { 0, 2, 3, 3, 4, 5 };
+		// number of elements for each ship
+		//int inc = j;
+		//shipSize[j] = inc;
+
+		for (int i = 0; i < shipSize[j]; i++)
+		{
+			if (input == 'V')
+			{
+				players[whichPlayer].m_gameGrid[0][location.m_row + i][location.m_col] = ship_type;
+			}
+			else
+			{
+				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col - i] = ship_type;
+			}
+			//i++;
+		}
 
 
 
@@ -638,7 +659,10 @@ bool validLocation(const Player& player, short shipNumber, char size)
 {
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
-	// your code goes here ...
+	if (true)
+	{
+
+	}
 
 	// replace the return value
 	return true;
