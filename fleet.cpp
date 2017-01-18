@@ -657,15 +657,24 @@ Cell getCoord(istream& sin, char size)
 //---------------------------------------------------------------------------------
 bool validLocation(const Player& player, short shipNumber, char size)
 {
+	bool r_val = false;
+	Cell location = player.m_ships[shipNumber].m_bowLocation;
+	Ship ship_type = static_cast<Ship>(shipNumber);
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
-	if (true)
+	
+	if (size == 'L')
 	{
-
+		if ((location.m_col > LARGECOLS - ship_type) & (location.m_row > LARGEROWS - ship_type))
+			r_val = true;
+	}
+	else
+	{
+		if ((location.m_col > SMALLCOLS - ship_type) & (location.m_row > SMALLROWS - ship_type))
+			r_val = true;
 	}
 
-	// replace the return value
-	return true;
+	return r_val;
 }
 
 //---------------------------------------------------------------------------------
