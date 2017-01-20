@@ -386,6 +386,7 @@ void setships(Player players[], char size, short whichPlayer)
 	char ok = 'Y';
 	char save = 'N';
 	Ship ship_type;
+	Direction orientation;
 	ostringstream outSStream;
 	Cell location = { 0, 0 };
 	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
@@ -398,6 +399,7 @@ void setships(Player players[], char size, short whichPlayer)
 		input = safeChoice(outSStream.str(), 'V', 'H');
 		players[whichPlayer].m_ships[j].m_orientation
 			= (input == 'V') ? VERTICAL : HORIZONTAL;
+		orientation = players[whichPlayer].m_ships[j].m_orientation;
 		cout << "Player " << whichPlayer + 1 << " Enter " << shipNames[j] <<
 			" bow coordinates <row letter><col #>: ";
 		players[whichPlayer].m_ships[j].m_bowLocation = getCoord(cin, size);
@@ -428,15 +430,16 @@ void setships(Player players[], char size, short whichPlayer)
 			}
 			else
 			{
-				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col - i] = ship_type;
+				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
 			}
 			//i++;
 		}
 
 	} // end for j
+	printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
 	save = safeChoice("\nSave starting grid?", 'Y', 'N');
 	if (save == 'Y')
-		saveGrid(players, whichPlayer, size);
+		saveGrid(players, whichPlayer, size, orientation);
 }
 
 //---------------------------------------------------------------------------------
@@ -470,38 +473,25 @@ void setships(Player players[], char size, short whichPlayer)
 //		12/20/05 PB completed v 0.1
 //     
 //---------------------------------------------------------------------------------
-void saveGrid(Player players[], short whichPlayer, char size)
+void saveGrid(Player players[], short whichPlayer, char size, Direction orientation)
 {
 	ofstream out_file_handle;
-	string size_str = "";
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
 	char which_player;
-	which_player = (static_cast<char>(whichPlayer + 48)) + 1;
+	which_player = (static_cast<char>(whichPlayer + '0')) + 1;
 	char filename[13] = { "Player _.txt" };
 	filename[7] = which_player;
 
-	size_str = (toupper(size) == 'L') ? "Large Grid" : "Small Grid";
 
 	out_file_handle.open(filename);
-	out_file_handle << size_str << endl;
-	for (short rows = 0; rows < numberOfRows; rows++)
+	out_file_handle << toupper(size) << endl;
+	for (short i = 0; i < SHIP_SIZE_ARRAYSIZE; i++)
 	{
-		for (short cols = 0; cols < numberOfCols; cols++)
-		{
-			out_file_handle << players[whichPlayer].m_gameGrid[0][rows][cols];
-		}
-		out_file_handle << endl;
-	}
-	out_file_handle << endl;
-	for (short rows = 0; rows < numberOfRows; rows++)
-	{
-		for (short cols = 0; cols < numberOfCols; cols++)
-		{
-			out_file_handle << players[whichPlayer].m_gameGrid[1][rows][cols];
-		}
-		out_file_handle << endl;
+		out_file_handle << orientation << " " << 
+			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_row + '0') << "," << 
+			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_col + '0') << endl;
 	}
 	out_file_handle << endl;
 	out_file_handle.close();
@@ -623,7 +613,7 @@ Cell getCoord(istream& sin, char size)
 	do
 	{
 		col = 0;
-		cout << "Row must be a letter from A to " << highChar
+		cout << endl << "Row must be a letter from A to " << highChar
 			<< " and column must be  from 1 to " << numberOfCols << ": ";
 		while ((row = toupper(sin.get())) < 'A' || row > highChar)
 		{
@@ -676,43 +666,35 @@ Cell getCoord(istream& sin, char size)
 //---------------------------------------------------------------------------------
 bool validLocation(const Player& player, short shipNumber, char size)
 {
-	bool r_val = false;
+	bool r_val = true;
 	Cell location = player.m_ships[shipNumber].m_bowLocation;
 	Ship ship_type = static_cast<Ship>(shipNumber);
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
-	if ((location.m_col <= (numberOfCols - shipSize[shipNumber])) & (location.m_row <= (numberOfRows - shipSize[shipNumber])))
+	if ((player.m_ships[shipNumber].m_orientation == VERTICAL) & (location.m_row <= ((numberOfRows)-shipSize[shipNumber])))
 	{
-		r_val = true;
+		for (short i = 0; i < shipSize[ship_type]; i++)
+		{
+			if (!player.m_gameGrid[0][location.m_row + i][location.m_col] == NOSHIP)
+			{
+				r_val = false;
+			}
+		}
 	}
-
-	if (r_val == true)
+	else if ((player.m_ships[shipNumber].m_orientation == HORIZONTAL) & (location.m_col <= ((numberOfCols)-shipSize[shipNumber])))
 	{
-		if (player.m_ships[shipNumber].m_orientation == VERTICAL) 
+		for (short i = 0; i < shipSize[ship_type]; i++)
 		{
-			for (short i = 0; i < ship_type; i++)
+			if (!player.m_gameGrid[0][location.m_row][location.m_col + i] == NOSHIP)
 			{
-				if (!player.m_gameGrid[0][location.m_row + i][location.m_col] == NOSHIP)
-				{
-					return false;
-				}
+				r_val = false;
 			}
 		}
-		else if (player.m_ships[shipNumber].m_orientation == HORIZONTAL) 
-		{
-			for (short i = 0; i < ship_type; i++)
-			{
-				if (!player.m_gameGrid[0][location.m_row][location.m_col + i] == NOSHIP)
-				{
-					return false;
-				}
-			}
-		}
-		else
-		{
-
-		}
+	}
+	else
+	{
+		r_val = false;
 	}
 
 	return r_val;

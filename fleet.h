@@ -130,7 +130,7 @@ void allocMem(Player players[], char size);
 void deleteMem(Player players[], char size);
 
 // saves the ship grid to a file
-void saveGrid(Player players[], short whichPlayer, char size);
+void saveGrid(Player players[], short whichPlayer, char size, Direction orientation);
 
 // reads grid from a file	
 bool getGrid(Player players[], short whichPlayer, char size, string fileName);
