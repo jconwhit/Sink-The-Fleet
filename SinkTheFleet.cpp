@@ -107,6 +107,7 @@ int main(void)
 				{
 					cout << "Reading from file...";
 					getGrid(game, whichPlayer, gridSize, filename);
+					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
 				}
 			}
 			else if (whichPlayer == 1)
@@ -121,6 +122,7 @@ int main(void)
 				{
 					cout << "Reading from file...";
 					getGrid(game, whichPlayer, gridSize, filename);
+					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
 				}
 			}
 			whichPlayer++;

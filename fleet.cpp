@@ -272,14 +272,38 @@ void printGrid(ostream& sout, Ship** grid, char size)
 	system("cls");
 
 	for (short j = 1; j <= numberOfCols; ++j)
-		sout << setw(3) << j;
+	{
+		if (j == 1)
+		{
+			sout << setw(4) << j;
+		}
+		else 
+		{
+			sout << setw(3) << j;
+		}
+	}
+	sout << endl;
+	for (short i = 0; i <= numberOfCols; i++)
+	{
+		
+		if (i == 0)
+		{
+			sout << HORIZ;
+			sout << CL;
+		}
+		else
+		{
+			sout << HORIZ << HORIZ;
+			sout << CR;
+		}
+	}
 	sout << endl;
 
 	//print rows beginning with char a-j
 	int alphaChar = 65;
 	for (int i = 0; i < numberOfRows; i++)
 	{
-		sout << (char)alphaChar++; //print alpha character at start of every other row
+		sout << (char)alphaChar++ << VERT; //print alpha character at start of every other row
 
 								   //print out each cell in the grid.
 		for (int l = 0; l < numberOfCols; l++)
@@ -291,7 +315,7 @@ void printGrid(ostream& sout, Ship** grid, char size)
 		sout << endl;
 
 		//print out the extra horizontal line
-		sout << HORIZ;
+		sout << HORIZ << CL;
 
 		// regular line w/ no data
 		for (int k = 0; k < numberOfCols; k++)
@@ -490,7 +514,7 @@ void saveGrid(Player players[], short whichPlayer, char size)
 	for (short i = 1; i < SHIP_SIZE_ARRAYSIZE; i++)
 	{
 		out_file_handle << players[whichPlayer].m_ships[i].m_orientation << " " <<
-			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_row + '0') << "," << 
+			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_row + '0') << "," <<
 			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_col + '0') << endl;
 	}
 	out_file_handle << endl;
@@ -535,16 +559,17 @@ void saveGrid(Player players[], short whichPlayer, char size)
 //     
 //---------------------------------------------------------------------------------
 bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
-	string line; 
-	ifstream ifs; 
-	Ship ship = NOSHIP; 
-	char fsize = 'S'; 
-	char input = NULL; 
-	char row = 'A'; 
-	int col = 0; 
-	char save = 'N'; 
-	Ship ship_type; 
-	Cell location = { 0, 0 }; 
+	string line;
+	ifstream ifs;
+	Ship ship = NOSHIP;
+	char fsize = 'S';
+	Direction input = VERTICAL;
+	short too_high = 0;
+	unsigned short row = 0;
+	unsigned short col = 0;
+	char save = 'N';
+	Ship ship_type = NOSHIP;
+	Cell location = { 0, 0 };
 	//short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS; 
 	//short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
@@ -574,38 +599,47 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
 
 	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
 	{
+		too_high = 0;
 		//input = ifs.get();
 		getline(ifs, line);
-		input = line.at(0);
+		input = static_cast<Direction>(line.at(0) - '0');
 		players[whichPlayer].m_ships[j].m_orientation
 			= (input == 1) ? VERTICAL : HORIZONTAL;
-		getline(ifs, line);
-		row = line.at(2);
-		col = line.at(4);
-		location.m_col = col - '1';
-		location.m_row = static_cast<short>(row - 'A');
-		players[whichPlayer].m_ships[j].m_bowLocation = location;
 
-		ship_type = static_cast<Ship>(j);
-		players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = ship_type;
-
-		for (int i = 0; i < shipSize[j]; i++)
+		row = (line.at(2) - '0');
+		col = (line.at(4) - '0');
+		if (!(((row - '0') < numberOfRows) & ((col - '0') < numberOfCols)))
 		{
-			if (input == VERTICAL)
-			{
-				players[whichPlayer].m_gameGrid[0][location.m_row + i][location.m_col] = ship_type;
-			}
-			else
-			{
-				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
-			}
+			cout << "Row too high. Error." << endl;
+			too_high = 1;
+			continue;
 		}
 
+		
+			location.m_col = col;
+			location.m_row = row;
+			players[whichPlayer].m_ships[j].m_bowLocation = location;
+
+			ship_type = static_cast<Ship>(j);
+			players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = ship_type; //break point
+
+			for (int i = 0; i < shipSize[j]; i++)
+			{
+				if (input == VERTICAL)
+				{
+					players[whichPlayer].m_gameGrid[0][location.m_row + i][location.m_col] = ship_type;
+				}
+				else
+				{
+					players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
+				}
+			}
+		
 	} // end for j
-	printGrid(cout, players[whichPlayer].m_gameGrid[0], fsize);
-	save = safeChoice("\nSave starting grid?", 'Y', 'N');
+
+	/*save = safeChoice("\nSave starting grid?", 'Y', 'N');
 	if (save == 'Y')
-		saveGrid(players, whichPlayer, fsize);
+		saveGrid(players, whichPlayer, fsize);*/
 	return true;
 }
 
