@@ -610,8 +610,9 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
 		col = (line.at(4) - '0');
 		if (!(((row - '0') < numberOfRows) & ((col - '0') < numberOfCols)))
 		{
-			cout << "Row too high. Error." << endl;
+			cout << "Dimension bound error.." << endl;
 			too_high = 1;
+			cin.get();
 			continue;
 		}
 
