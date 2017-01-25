@@ -97,6 +97,7 @@ int main(void)
 		{
 			if (whichPlayer == 0)
 			{
+				filename = "Player 1.txt";
 				readFromFileChoice = safeChoice("Player 1, Would you like to read starting grid from a file? (Y/N):", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
@@ -104,12 +105,13 @@ int main(void)
 				}
 				else if (readFromFileChoice == 'Y')
 				{
-					cout << "other stuff";
-					//code
+					cout << "Reading from file...";
+					getGrid(game, whichPlayer, gridSize, filename);
 				}
 			}
 			else if (whichPlayer == 1)
 			{
+				filename = "Player 2.txt";
 				readFromFileChoice = safeChoice("Player 2, Would you like to read starting grid from a file? (Y/N):", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
@@ -117,8 +119,8 @@ int main(void)
 				}
 				else if (readFromFileChoice == 'Y')
 				{
-					cout << "other stuff";
-					//code
+					cout << "Reading from file...";
+					getGrid(game, whichPlayer, gridSize, filename);
 				}
 			}
 			whichPlayer++;

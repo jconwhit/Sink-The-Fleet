@@ -439,7 +439,7 @@ void setships(Player players[], char size, short whichPlayer)
 	printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
 	save = safeChoice("\nSave starting grid?", 'Y', 'N');
 	if (save == 'Y')
-		saveGrid(players, whichPlayer, size, orientation);
+		saveGrid(players, whichPlayer, size);
 }
 
 //---------------------------------------------------------------------------------
@@ -473,7 +473,7 @@ void setships(Player players[], char size, short whichPlayer)
 //		12/20/05 PB completed v 0.1
 //     
 //---------------------------------------------------------------------------------
-void saveGrid(Player players[], short whichPlayer, char size, Direction orientation)
+void saveGrid(Player players[], short whichPlayer, char size)
 {
 	ofstream out_file_handle;
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
@@ -486,10 +486,10 @@ void saveGrid(Player players[], short whichPlayer, char size, Direction orientat
 
 
 	out_file_handle.open(filename);
-	out_file_handle << toupper(size) << endl;
-	for (short i = 0; i < SHIP_SIZE_ARRAYSIZE; i++)
+	out_file_handle << (size) << endl;
+	for (short i = 1; i < SHIP_SIZE_ARRAYSIZE; i++)
 	{
-		out_file_handle << orientation << " " << 
+		out_file_handle << players[whichPlayer].m_ships[i].m_orientation << " " <<
 			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_row + '0') << "," << 
 			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_col + '0') << endl;
 	}
@@ -534,20 +534,23 @@ void saveGrid(Player players[], short whichPlayer, char size, Direction orientat
 //		9/12/06 PB comleted v 0.5
 //     
 //---------------------------------------------------------------------------------
-bool getGrid(Player players[], short whichPlayer, char size, string fileName)
-{
-	string line;
-	ifstream ifs;
-	Ship ship = NOSHIP;
-	short shipCount[SHIP_SIZE_ARRAYSIZE] = { 0 };
-	char cell = ' ';
-	char fsize = 'S';
-	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
-	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
+bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
+	string line; 
+	ifstream ifs; 
+	Ship ship = NOSHIP; 
+	char fsize = 'S'; 
+	char input = NULL; 
+	char row = 'A'; 
+	int col = 0; 
+	char save = 'N'; 
+	Ship ship_type; 
+	Cell location = { 0, 0 }; 
+	//short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS; 
+	//short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
 	try
 	{
-		ifs.open(fileName.c_str());
+		ifs.open(fileName);
 		if (!ifs)
 		{
 			cout << "could not open file " << fileName << endl
@@ -563,9 +566,46 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName)
 		cin.ignore(BUFFER_SIZE, '\n');
 		return false;
 	}
-	// your code goes here ...
 
+	fsize = ifs.get();
+	ifs.ignore(FILENAME_MAX, '\n');
+	short numberOfRows = (toupper(fsize) == 'L') ? LARGEROWS : SMALLROWS;
+	short numberOfCols = (toupper(fsize) == 'L') ? LARGECOLS : SMALLCOLS;
 
+	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
+	{
+		//input = ifs.get();
+		getline(ifs, line);
+		input = line.at(0);
+		players[whichPlayer].m_ships[j].m_orientation
+			= (input == 1) ? VERTICAL : HORIZONTAL;
+		getline(ifs, line);
+		row = line.at(2);
+		col = line.at(4);
+		location.m_col = col - '1';
+		location.m_row = static_cast<short>(row - 'A');
+		players[whichPlayer].m_ships[j].m_bowLocation = location;
+
+		ship_type = static_cast<Ship>(j);
+		players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = ship_type;
+
+		for (int i = 0; i < shipSize[j]; i++)
+		{
+			if (input == VERTICAL)
+			{
+				players[whichPlayer].m_gameGrid[0][location.m_row + i][location.m_col] = ship_type;
+			}
+			else
+			{
+				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
+			}
+		}
+
+	} // end for j
+	printGrid(cout, players[whichPlayer].m_gameGrid[0], fsize);
+	save = safeChoice("\nSave starting grid?", 'Y', 'N');
+	if (save == 'Y')
+		saveGrid(players, whichPlayer, fsize);
 	return true;
 }
 
