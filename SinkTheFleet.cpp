@@ -93,12 +93,12 @@ int main(void)
 
 		// ... your code goes here
 
-		for (whichPlayer = 0; whichPlayer < NUMPLAYERS; whichPlayer++)
+		for (whichPlayer = 0; whichPlayer <= NUMPLAYERS; whichPlayer++)
 		{
 			if (whichPlayer == 0)
 			{
 				filename = "Player 1.txt";
-				readFromFileChoice = safeChoice("Player 1, Would you like to read starting grid from a file? (Y/N):", 'Y', 'N');
+				readFromFileChoice = safeChoice("Player 1, Would you like to read starting grid from a file?", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
 					setships(game, gridSize, whichPlayer);
@@ -113,10 +113,10 @@ int main(void)
 			else if (whichPlayer == 1)
 			{
 				filename = "Player 2.txt";
-				readFromFileChoice = safeChoice("Player 2, Would you like to read starting grid from a file? (Y/N):", 'Y', 'N');
+				readFromFileChoice = safeChoice("Player 2, Would you like to read starting grid from a file?", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
-					setships(&game[NUMPLAYERS], gridSize, whichPlayer);
+					setships(game, gridSize, whichPlayer);
 				}
 				else if (readFromFileChoice == 'Y')
 				{
@@ -125,15 +125,64 @@ int main(void)
 					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
 				}
 			}
-			whichPlayer++;
+			//whichPlayer++;
 
 		}
 		whichPlayer = 0;
 		while (!gameOver)
 		{
-			// ... a lot more stuff ...
+			system("cls");
+			cout << endl;
+			header(cout);
+			cout << "Press <enter> to start the battle..." << endl;
+			while (whichPlayer == 0)
+			{
+				system("cls");
+				printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+				cout << "Player " << whichPlayer + 1 << ", Enter Coordinates for Firing." << endl;
+				coord = getCoord(cin, gridSize);
+				if (game[whichPlayer + 1].m_gameGrid[0][coord.m_row][coord.m_col] != NOSHIP)
+				{
+					//struct ShipInfo
+					//{
+					//	Ship m_name;			// which ship?
+					//	Direction m_orientation;// which direction is the ship facing? 
+					//	Cell m_bowLocation;		// which cell is the bow location?
+					//	short m_piecesLeft;		// how many sections are left undestroyed?
+					//};
+					game[whichPlayer + 1].m_gameGrid[0][coord.m_row][coord.m_col] = shipHit;
+					//ShipInfo[].m_piecesLeft;
+					game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = HIT;
+					printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+					cout << "HIT" << endl;
 
-
+				}
+				else
+				{
+					game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = MISSED;
+					cout << "MISS" << endl;
+					whichPlayer++;
+				}
+			}
+			while (whichPlayer == 1)
+			{
+				system("cls");
+				printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+				cout << "Player " << whichPlayer + 1 << ", Enter Coordinates for Firing." << endl;
+				coord = getCoord(cin, gridSize);
+				if (game[whichPlayer - 1].m_gameGrid[0][coord.m_row][coord.m_col] != NOSHIP)
+				{
+					game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = HIT;
+					printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+					cout << "HIT" << endl;
+				}
+				else
+				{
+					game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = MISSED;
+					cout << "MISS" << endl;
+					whichPlayer++;
+				}
+			}
 			whichPlayer = !whichPlayer;  // switch players
 		}
 
