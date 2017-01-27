@@ -55,53 +55,53 @@ extern const char* shipNames[7];
 int main(void)
 {
 	short numRows = SMALLROWS;			// total number of rows in the array
-	short numCols = SMALLCOLS;			// total number of columns in the array
+	short numCols = SMALLCOLS;
 	char again = 'N';
 	char gridSize = 'S';
 	char readFromFileChoice = 'N';
 	short whichPlayer = 0;
-	short otherPlayer = 1;
 	bool gameOver = false;
 	bool reshot = false;
 	Cell coord = { 0, 0 };
-	string message;
 	string filename;
 	Ship shipHit = NOSHIP;
+	ShipInfo targetInfo;
 	Player game[NUMPLAYERS];	// the two players in an array
 								// other stuff ...
+	
 
 	do
 	{
 		system("cls");
 		cout << endl;
 		header(cout);
-		for (whichPlayer = 0; whichPlayer < NUMPLAYERS; whichPlayer++)
+		gridSize = safeChoice("Which size grid to you want to use", 'S', 'L');
+
+		if (gridSize == 'L')
+		{
+			numRows = LARGEROWS;
+			numCols = LARGECOLS;
+		}
+		else
+		{
+			numRows = SMALLROWS;
+			numCols = SMALLCOLS;
+		}
+		initializePlayer(game);
+		initializePlayer(game + 1);
+		// dynamically create the rows of the array
+		allocMem(game, gridSize);
+
+		// ... your code goes here
+
+		for (whichPlayer = 0; whichPlayer <= NUMPLAYERS; whichPlayer++)
 		{
 			if (whichPlayer == 0)
 			{
 				filename = "Player 1.txt";
-				system("cls");
-				header(cout);
 				readFromFileChoice = safeChoice("Player 1, Would you like to read starting grid from a file?", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
-					gridSize = safeChoice("Which size grid to you want to use", 'S', 'L');
-
-					if (gridSize == 'L')
-					{
-						numRows = LARGEROWS;
-						numCols = LARGECOLS;
-					}
-					else
-					{
-						numRows = SMALLROWS;
-						numCols = SMALLCOLS;
-					}
-					initializePlayer(game);
-					initializePlayer(game + 1);
-
-					// dynamically create the rows of the array
-					allocMem(game, gridSize);
 					setships(game, gridSize, whichPlayer);
 				}
 				else if (readFromFileChoice == 'Y')
@@ -109,30 +109,14 @@ int main(void)
 					cout << "Reading from file...";
 					getGrid(game, whichPlayer, gridSize, filename);
 					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
-					cout << "Press <enter> to continue.." << endl;
-					cin.get();
 				}
 			}
 			else if (whichPlayer == 1)
 			{
 				filename = "Player 2.txt";
-				system("cls");
-				header(cout);
 				readFromFileChoice = safeChoice("Player 2, Would you like to read starting grid from a file?", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
-					gridSize = safeChoice("Which size grid to you want to use", 'S', 'L');
-
-					if (gridSize == 'L')
-					{
-						numRows = LARGEROWS;
-						numCols = LARGECOLS;
-					}
-					else
-					{
-						numRows = SMALLROWS;
-						numCols = SMALLCOLS;
-					}
 					setships(game, gridSize, whichPlayer);
 				}
 				else if (readFromFileChoice == 'Y')
@@ -140,100 +124,95 @@ int main(void)
 					cout << "Reading from file...";
 					getGrid(game, whichPlayer, gridSize, filename);
 					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
-					cout << "Press <enter> to continue.." << endl;
-					cin.get();
 				}
 			}
-
 		}
-		whichPlayer = 0;
-
-		//start of battle
 		system("cls");
 		header(cout);
-		cout << "Player " << whichPlayer + 1 << ", press <enter> to start the battle..." << endl;
-		cin.get();
+		cout << "Press <enter> to start the battle..." << endl;
+		cin.ignore(BUFFER_SIZE, '\n');
 
-		while (gameOver == false)
+		whichPlayer = 0;
+		while (!gameOver)
 		{
-
-			system("cls");
-			if (whichPlayer == 0)
-				otherPlayer = 1;
-			else
-				otherPlayer = 0;
-			shipHit = NOSHIP;
-			cout << endl;
-			header(cout);
-			printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
-			cout << "Player " << whichPlayer + 1 << ", enter coordinates for firing." << endl;
-			coord = getCoord(cin, gridSize);
-			if (game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] == (MINESWEEPER) ||
-				game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] == (SUB) ||
-				game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] == (FRIGATE) ||
-				game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] == (BATTLESHIP) ||
-				game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] == (CARRIER))
+			do
 			{
-				//keeps track of what ship was hit
-				shipHit = game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col];
 
-				game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] = HIT;
-
-				game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = HIT;
 				printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
-				cout << "HIT!" << endl;
-				game[otherPlayer].m_piecesLeft -= 1;
-				cout << "Player " << (otherPlayer + 1) <<
-					" has " << game[otherPlayer].m_piecesLeft <<
-					" pieces left." << endl;
-				cout << "Press <enter> to fire again." << endl;
-				if (game[otherPlayer].m_piecesLeft == 0)
+				reshot = false;
+				cout << "Player " << whichPlayer + 1 << ", Enter Coordinates for Firing." << endl;
+
+				coord = getCoord(cin, gridSize);
+
+				shipHit = game[!whichPlayer].m_gameGrid[0][coord.m_row][coord.m_col];
+
+
+				//If the space is not empty
+				if (shipHit != NOSHIP)
 				{
-					gameOver = true;
 					system("cls");
-					header(cout);
-					cout << "CONGRADULATIONS PLAYER " << whichPlayer + 1 <<
-						", YOU WON WITH " << game[whichPlayer].m_piecesLeft <<
-						" PIECES REMAINING!" << endl;
-					cout << "Press <enter> to continue.." << endl;
+					//if space has already been hit
+					if (shipHit == HIT)
+					{
+						printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+						cout << "THIS SPACE HAS PREVIOUSLY BEEN HIT." << endl;
+					}
+					else
+					{
+						//decrease total enemy fleet
+						game[!whichPlayer].m_piecesLeft--;
+						//decrease pieces of ship left	
+						targetInfo = game[!whichPlayer].m_ships[shipHit];
+						targetInfo.m_piecesLeft--;
+						game[!whichPlayer].m_ships[shipHit].m_piecesLeft--;
+
+						//adjust grid for hit
+						game[!whichPlayer].m_gameGrid[0][coord.m_row][coord.m_col] = HIT;
+						game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = HIT;
+						printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+						cout << "HIT" << endl;
+
+						if (targetInfo.m_piecesLeft == 0)
+						{
+							cout << shipNames[targetInfo.m_name] << " is destroyed." << endl;
+						}
+						if (game[!whichPlayer].m_piecesLeft == 0)
+						{
+							gameOver = true;
+							cout << "Enemy fleet has been destroyed." << endl;
+							cin.ignore(BUFFER_SIZE, '\n');
+							system("cls");
+							break;
+						}
+					}
+					reshot = true;
+
 				}
-				cin.get();
-			}
-			else if (game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] == (HIT))
-			{
+				else
+				{
+					//adjust for miss
+					game[!whichPlayer].m_gameGrid[0][coord.m_row][coord.m_col] = MISSED;
+					game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = MISSED;
+					printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+					cout << "MISS" << endl;
+				}
+
+				cout << "Press <enter> to contine." << endl;
+				cin.ignore(BUFFER_SIZE, '\n');
 				system("cls");
-				printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
-				cout << "You have already shot at" << 
-					(static_cast<char>(coord.m_row + 'A')) << 
-					(coord.m_col + 1) << ". Press <enter> to fire again." << endl;
-				cin.get();
-			}
-			else
-			{
-				/*Marks the current player's hit/miss grid to indicate
-				where they have previously missed*/
-				game[whichPlayer].m_gameGrid[1][coord.m_row][coord.m_col] = MISSED;
+			} while (reshot);
 
-				/*Marks the position to indicate that the current 
-				player has already fired at this position. Does NOT subtract
-				pieces from the opponent.*/
-				game[otherPlayer].m_gameGrid[0][coord.m_row][coord.m_col] = HIT; 
-
-				cout << "MISS!" << endl;
-				cout << "Player " << (otherPlayer + 1) <<
-					" still has " << game[otherPlayer].m_piecesLeft <<
-					" pieces left." << endl;
-				cout << "Press <enter> to end your turn." << endl;
-				whichPlayer = otherPlayer; //changes player when a shot misses
-				cin.get();
-			}
-			
-
+			if (gameOver)
+				break;
+			whichPlayer = !whichPlayer;  // switch players
 		}
+
+		//show ending dialouge w/ winner
+		endBox(whichPlayer);
 
 		again = safeChoice("Would you like to play again?", 'Y', 'N');
 	} while (again == 'Y');
+	//where deletemem will go
 
 	return EXIT_SUCCESS;
 }
-//
