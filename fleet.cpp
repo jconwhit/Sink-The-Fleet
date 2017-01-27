@@ -26,39 +26,39 @@
 const char* shipNames[SHIP_SIZE_ARRAYSIZE] =
 { "No Ship", "Mine Sweeper", "Submarine", "Frigate",
 "Battleship", "Aircraft Carrier" };
-const int TOTALPIECES = 17; // total pieces in all ships
-
-							//---------------------------------------------------------------------------------
-							// Function:	setShipInfo()
-							// Title:		Set ShipInfo
-							// Description:
-							//		Sets struct ShipInfo fields
-							// Programmer:
-							// 
-							// Date:	12/20/05
-							//
-							// Version:	0.1
-							// 
-							// Environment: Intel Xeon PC 
-							//                Software:   MS Windows 7 for execution; 
-							//                Compiles under Microsoft Visual C++.Net 2013
-							//
-							// Calls:
-							//
-							// Called By:
-							//
-							// Parameters:	shipInfoPtr: ShipInfo *; pointer to the ShipInfo to be set
-							//				name: Ship;	enumerated name of type of ship; default: NOSHIP
-							//				orientation: Direction;	enumerated direction; default: HORIZONTAL
-							//				row: unsigned short; row-coordinate in grid; default: 0
-							//				col: unsigned short; column-coordinate in grid; default: 0
-							// 
-							// Returns:	void
-							//
-							// History Log:
-							//		12/20/05 PB completed v 0.1
-							//   
-							//---------------------------------------------------------------------------------
+const int TOTALPIECES = 17; 
+// total pieces in all ships
+//---------------------------------------------------------------------------------
+// Function:	setShipInfo()
+// Title:		Set ShipInfo
+// Description:
+//		Sets struct ShipInfo fields
+// Programmer:
+// 
+// Date:	12/20/05
+//
+// Version:	0.1
+// 
+// Environment: Intel Xeon PC 
+//                Software:   MS Windows 7 for execution; 
+//                Compiles under Microsoft Visual C++.Net 2013
+//
+// Calls:
+//
+// Called By:
+//
+// Parameters:	shipInfoPtr: ShipInfo *; pointer to the ShipInfo to be set
+//				name: Ship;	enumerated name of type of ship; default: NOSHIP
+//				orientation: Direction;	enumerated direction; default: HORIZONTAL
+//				row: unsigned short; row-coordinate in grid; default: 0
+//				col: unsigned short; column-coordinate in grid; default: 0
+// 
+// Returns:	void
+//
+// History Log:
+//		12/20/05 PB completed v 0.1
+//   
+//---------------------------------------------------------------------------------
 void setShipInfo(ShipInfo * shipInfoPtr, Ship name, Direction orientation,
 	unsigned short row, unsigned short col)
 {
@@ -223,7 +223,8 @@ void printShip(ostream & sout, Ship thisShip)
 		break;
 	case HIT: sout << 'H';
 		break;
-	case MISSED:
+	case MISSED: sout << MISS;
+		break;
 	default: sout << 'X';
 	}
 	sout << VERT;
@@ -304,7 +305,7 @@ void printGrid(ostream& sout, Ship** grid, char size)
 	{
 		sout << (char)alphaChar++ << VERT; //print alpha character at start of every other row
 
-								   //print out each cell in the grid.
+										   //print out each cell in the grid.
 		for (int l = 0; l < numberOfCols; l++)
 		{
 			printShip(sout, grid[i][l]);
@@ -435,9 +436,11 @@ void setships(Player players[], char size, short whichPlayer)
 			j--; // redo
 			continue;
 		}
+
 		location = players[whichPlayer].m_ships[j].m_bowLocation;
 		ship_type = static_cast<Ship>(j);
 		players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = ship_type;
+
 
 		//const int SHIP_SIZE_ARRAYSIZE = 6; // size of the shipSize array
 		//const short shipSize[SHIP_SIZE_ARRAYSIZE] = { 0, 2, 3, 3, 4, 5 };
@@ -456,6 +459,31 @@ void setships(Player players[], char size, short whichPlayer)
 				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
 			}
 			//i++;
+		}
+		if (j == 1)
+		{
+			players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 2;
+		}
+		else if (j == 2)
+		{
+			players[whichPlayer].m_ships[j].m_name = SUB;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+		}
+		else if (j == 3)
+		{
+			players[whichPlayer].m_ships[j].m_name = FRIGATE;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+		}
+		else if (j == 4)
+		{
+			players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 4;
+		}
+		else if (j == 5)
+		{
+			players[whichPlayer].m_ships[j].m_name = CARRIER;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 5;
 		}
 
 	} // end for j
@@ -557,11 +585,11 @@ void saveGrid(Player players[], short whichPlayer, char size)
 //		9/12/06 PB comleted v 0.5
 //     
 //---------------------------------------------------------------------------------
-bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
+bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
 	string line;
 	ifstream ifs;
 	Ship ship = NOSHIP;
-	string size_str = "S";
+	char fsize = 'S';
 	Direction input = VERTICAL;
 	short too_high = 0;
 	unsigned short row = 0;
@@ -591,20 +619,15 @@ bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
 		return false;
 	}
 
-	getline(ifs, size_str);
-	if (whichPlayer == 0)
-		size = size_str.at(0);
-	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
-	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
-
-	initializePlayer(players + whichPlayer);
-
-	// dynamically create the rows of the array
-	allocMem(players, size);
+	fsize = ifs.get();
+	ifs.ignore(FILENAME_MAX, '\n');
+	short numberOfRows = (toupper(fsize) == 'L') ? LARGEROWS : SMALLROWS;
+	short numberOfCols = (toupper(fsize) == 'L') ? LARGECOLS : SMALLCOLS;
 
 	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
 	{
 		too_high = 0;
+		//input = ifs.get();
 		getline(ifs, line);
 		input = static_cast<Direction>(line.at(0) - '0');
 		players[whichPlayer].m_ships[j].m_orientation
@@ -639,12 +662,37 @@ bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
 				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
 			}
 		}
+		if (j == 1)
+		{
+			players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 2;
+		}
+		else if (j == 2)
+		{
+			players[whichPlayer].m_ships[j].m_name = SUB;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+		}
+		else if (j == 3)
+		{
+			players[whichPlayer].m_ships[j].m_name = FRIGATE;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+		}
+		else if (j == 4)
+		{
+			players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 4;
+		}
+		else if (j == 5)
+		{
+			players[whichPlayer].m_ships[j].m_name = CARRIER;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 5;
+		}
 
 	} // end for j
 
-	/*save = safeChoice("\nSave starting grid?", 'Y', 'N');
-	if (save == 'Y')
-		saveGrid(players, whichPlayer, fsize);*/
+	  /*save = safeChoice("\nSave starting grid?", 'Y', 'N');
+	  if (save == 'Y')
+	  saveGrid(players, whichPlayer, fsize);*/
 	return true;
 }
 
