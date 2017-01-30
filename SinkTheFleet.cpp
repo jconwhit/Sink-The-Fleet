@@ -92,7 +92,6 @@ int main(void)
 		// dynamically create the rows of the array
 		allocMem(game, gridSize);
 
-		// ... your code goes here
 
 		for (whichPlayer = 0; whichPlayer <= NUMPLAYERS; whichPlayer++)
 		{
@@ -213,6 +212,7 @@ int main(void)
 		again = safeChoice("Would you like to play again?", 'Y', 'N');
 	} while (again == 'Y');
 	//where deletemem will go
+	deleteMem(game, gridSize);
 
 	return EXIT_SUCCESS;
 }

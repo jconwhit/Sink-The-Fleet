@@ -26,7 +26,7 @@
 const char* shipNames[SHIP_SIZE_ARRAYSIZE] =
 { "No Ship", "Mine Sweeper", "Submarine", "Frigate",
 "Battleship", "Aircraft Carrier" };
-const int TOTALPIECES = 17; 
+const int TOTALPIECES = 17;
 // total pieces in all ships
 //---------------------------------------------------------------------------------
 // Function:	setShipInfo()
@@ -167,11 +167,24 @@ void allocMem(Player players[], char size)
 //---------------------------------------------------------------------------------
 void deleteMem(Player players[], char size)
 {
-	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
-	// your code goes here ...
-	// delete[] in reverse order of allocMem()
-	// be sure to check if the memory was allocated (!nullptr) BEFORE deleting
-
+	{
+		short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
+		short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
+		for (short whichPlayer = 0; whichPlayer < NUMPLAYERS; whichPlayer++)
+		{
+			if (players[whichPlayer].m_gameGrid[0] != nullptr)
+			{
+				for (short j = 0; j < numberOfRows; ++j)
+				{
+					delete[] players[whichPlayer].m_gameGrid[0][j];
+					delete[] players[whichPlayer].m_gameGrid[1][j];
+				} // end for j
+				delete[] players[whichPlayer].m_gameGrid[0];
+				delete[] players[whichPlayer].m_gameGrid[1];
+			}
+		}
+		// be sure to check if the memory was allocated (!nullptr) BEFORE deleting
+	}
 }
 
 //---------------------------------------------------------------------------------

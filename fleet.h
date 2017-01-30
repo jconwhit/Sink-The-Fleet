@@ -133,7 +133,7 @@ void deleteMem(Player players[], char size);
 void saveGrid(Player players[], short whichPlayer, char size);
 
 // reads grid from a file	
-bool getGrid(Player players[], short whichPlayer, char& size, string fileName);
+bool getGrid(Player players[], short whichPlayer, char size, string fileName);
 
 // allows user to put ships in grid
 void setships(Player players[], char size, short whichPlayer);
