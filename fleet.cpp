@@ -236,8 +236,7 @@ void printShip(ostream & sout, Ship thisShip)
 		break;
 	case HIT: sout << 'H';
 		break;
-	case MISSED: sout << MISS;
-		break;
+	case MISSED: 
 	default: sout << 'X';
 	}
 	sout << VERT;
@@ -598,7 +597,7 @@ void saveGrid(Player players[], short whichPlayer, char size)
 //		9/12/06 PB comleted v 0.5
 //     
 //---------------------------------------------------------------------------------
-bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
+bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
 	string line;
 	ifstream ifs;
 	Ship ship = NOSHIP;
@@ -634,13 +633,37 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
 
 	fsize = ifs.get();
 	ifs.ignore(FILENAME_MAX, '\n');
+
+	if ((size == 'S') && (fsize == 'L'))
+	{
+		if (whichPlayer == 0)
+		{
+			deleteMem(players, 'S');
+			allocMem(players, 'L');
+			size = 'L';
+		}
+		else
+		{
+			//does not allow the second player to have a larger grid than the first player, due to allocation method
+			//this prompts player 2 to use the setships() function to enter their grid.
+			system("cls");
+			cout << "PLAYER 2 MAY NOT HAVE A LARGER GRID THAN PLAYER 1." << endl;
+			cout << "Press <enter> to set your ships." << endl;
+			cin.get();
+			setships(players, size, whichPlayer);
+			return true;
+		}
+	}
+
+
 	short numberOfRows = (toupper(fsize) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(fsize) == 'L') ? LARGECOLS : SMALLCOLS;
 
 	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
 	{
-		too_high = 0;
-		//input = ifs.get();
+		location.m_col = 0;
+		location.m_row = 0;
+		//too_high = 0;
 		getline(ifs, line);
 		input = static_cast<Direction>(line.at(0) - '0');
 		players[whichPlayer].m_ships[j].m_orientation
@@ -651,7 +674,7 @@ bool getGrid(Player players[], short whichPlayer, char size, string fileName) {
 		if (!(((row - '0') < numberOfRows) & ((col - '0') < numberOfCols)))
 		{
 			cout << "Dimension bound error.." << endl;
-			too_high = 1;
+			//too_high = 1;
 			cin.get();
 			continue;
 		}

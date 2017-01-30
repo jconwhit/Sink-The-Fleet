@@ -73,7 +73,6 @@ int main(void)
 	do
 	{
 		system("cls");
-		cout << endl;
 		header(cout);
 		gridSize = safeChoice("Which size grid to you want to use", 'S', 'L');
 
@@ -98,6 +97,8 @@ int main(void)
 			if (whichPlayer == 0)
 			{
 				filename = "Player 1.txt";
+				system("cls");
+				header(cout);
 				readFromFileChoice = safeChoice("Player 1, Would you like to read starting grid from a file?", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
@@ -108,11 +109,15 @@ int main(void)
 					cout << "Reading from file...";
 					getGrid(game, whichPlayer, gridSize, filename);
 					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
+					cout << "Press <enter> to continue.." << endl;
+					cin.get();
 				}
 			}
 			else if (whichPlayer == 1)
 			{
 				filename = "Player 2.txt";
+				system("cls");
+				header(cout);
 				readFromFileChoice = safeChoice("Player 2, Would you like to read starting grid from a file?", 'Y', 'N');
 				if (readFromFileChoice == 'N')
 				{
@@ -123,6 +128,8 @@ int main(void)
 					cout << "Reading from file...";
 					getGrid(game, whichPlayer, gridSize, filename);
 					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
+					cout << "Press <enter> to continue.." << endl;
+					cin.get();
 				}
 			}
 		}
@@ -155,6 +162,12 @@ int main(void)
 					{
 						printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
 						cout << "THIS SPACE HAS PREVIOUSLY BEEN HIT." << endl;
+					}
+					//without this the program will detect re-firing at a missed cell as a hit
+					else if (shipHit == MISSED) 
+					{
+						printGrid(cout, game[whichPlayer].m_gameGrid[1], gridSize);
+						cout << "THIS SPACE HAS PREVIOUSLY BEEN MISSED." << endl;
 					}
 					else
 					{
