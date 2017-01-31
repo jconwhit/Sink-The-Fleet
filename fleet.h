@@ -4,10 +4,15 @@
 // Description: Sink the Fleet declarations
 //	
 // Programmer:	Paul Bladek
+// modified by: Jared Whitney
 // 
 // Environment: Hardware: i3 
 //              Software: OS: Windows 7; 
 //              Compiles under Microsoft Visual C++ 2012
+//
+// History Log: JW changed getGrid size parameter to a char& instead of
+//					a char as to change the value of the original gridSize
+//					in main
 //----------------------------------------------------------------------------
 #ifndef FLEET_H
 #define FLEET_H
@@ -100,22 +105,9 @@ struct Player
 // prints to sout one individual ship
 void printShip(ostream & sout, Ship thisShip);
 
-// inputs a ship number from sin and returns a ship
-Ship inputShip(istream & sin); 
-
-// returns true if ship has been sunk (no points left)
-bool isSunk(Ship thisShip); 
-
 //  prints a specific game grid
 void printGrid(ostream& sout, Ship** grid, char size); 
 
-//----------------------------------------------------------------------------
-// function prototypes for ShipInfo
-//----------------------------------------------------------------------------
-// sets ShipInfo fields
-void setShipInfo(ShipInfo * shipInfoPtr, Ship name = NOSHIP,
-	Direction orientation = HORIZONTAL,
-	unsigned short row = 0, unsigned short col = 0);
 
 //----------------------------------------------------------------------------
 // function prototypes for Player
@@ -133,7 +125,8 @@ void deleteMem(Player players[], char size);
 void saveGrid(Player players[], short whichPlayer, char size);
 
 // reads grid from a file	
-bool getGrid(Player players[], short whichPlayer, char& size, string fileName);
+bool getGrid(Player players[], short whichPlayer, 
+	char& size, string fileName);
 
 // allows user to put ships in grid
 void setships(Player players[], char size, short whichPlayer);
