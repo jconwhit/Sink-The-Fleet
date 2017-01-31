@@ -139,6 +139,7 @@ int main(void)
 		cin.ignore(BUFFER_SIZE, '\n');
 
 		whichPlayer = 0;
+		gameOver = false;
 		while (!gameOver)
 		{
 			do
