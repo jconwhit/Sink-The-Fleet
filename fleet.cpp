@@ -17,71 +17,35 @@
 //	  endBox() 
 //----------------------------------------------------------------------------
 #include "fleet.h"
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // YOU ARE RESPONSIBLE FOR CORRECT HEADERS -- one for each function
 // include the definitions for each of the non-template functions
 //    declared in fleet.h 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 
 const char* shipNames[SHIP_SIZE_ARRAYSIZE] =
 { "No Ship", "Mine Sweeper", "Submarine", "Frigate",
 "Battleship", "Aircraft Carrier" };
 const int TOTALPIECES = 17;
 // total pieces in all ships
-//---------------------------------------------------------------------------------
-// Function:	setShipInfo()
-// Title:		Set ShipInfo
-// Description:
-//		Sets struct ShipInfo fields
-// Programmer:
-// 
-// Date:	12/20/05
-//
-// Version:	0.1
-// 
-// Environment: Intel Xeon PC 
-//                Software:   MS Windows 7 for execution; 
-//                Compiles under Microsoft Visual C++.Net 2013
-//
-// Calls:
-//
-// Called By:
-//
-// Parameters:	shipInfoPtr: ShipInfo *; pointer to the ShipInfo to be set
-//				name: Ship;	enumerated name of type of ship; default: NOSHIP
-//				orientation: Direction;	enumerated direction; default: HORIZONTAL
-//				row: unsigned short; row-coordinate in grid; default: 0
-//				col: unsigned short; column-coordinate in grid; default: 0
-// 
-// Returns:	void
-//
-// History Log:
-//		12/20/05 PB completed v 0.1
-//   
-//---------------------------------------------------------------------------------
-void setShipInfo(ShipInfo * shipInfoPtr, Ship name, Direction orientation,
-	unsigned short row, unsigned short col)
-{
 
-}
-
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	allocMem()
 // Title:		Allocate Memory
 // Description:
 //		allocates memory for current grids
 // Programmer:	Paul Bladek
-// modified by:	
+// modified by:	Mike Farrell, Jared Whitney
 // 
-// Date:	9/13/06
+// Date:	01/10/17
 //
 // Version:	1.01
 // 
-// Environment: Hardware: i3 
-//              Software: OS: Windows 7; 
-//              Compiles under Microsoft Visual C++ 2013
+// Environment: Hardware: i7 
+//              Software: OS: Windows 10; 
+//              Compiles under Microsoft Visual C++ 2015
 //
-// Calls:
+// Calls: deleteMem()
 //
 // Called By:	main()
 //
@@ -93,8 +57,9 @@ void setShipInfo(ShipInfo * shipInfoPtr, Ship name, Direction orientation,
 // History Log:
 //		12/20/05 PB completed v 1.0 
 //		9/13/06  PB completed v 1.01
+//		01/10/17 MF & JW completed v 1.02
 //
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void allocMem(Player players[], char size)
 {
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
@@ -137,34 +102,35 @@ void allocMem(Player players[], char size)
 	}
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	deleteMem()
 // Title:		Delete Memory
 // Description:
 //		Safely deletes memory for grids
-// Programmer:
+// Programmer: Jared Whitney
 // 
-// Date:	12/20/05
+// Date:	01/26/17
 //
-// Version:	0.1
+// Version:	1.0
 // 
-// Environment: Hardware: i3 
-//              Software: OS: Windows 7; 
-//              Compiles under Microsoft Visual C++ 2013
+// Environment: Hardware: i7 
+//              Software: OS: Windows 10; 
+//              Compiles under Microsoft Visual C++ 2015
 //
 // Calls:
 //
 // Called By:	main()
 //
 // Parameters:	players: Player[]; 	the array of the 2 Players
-//		size: char;	'	S' or 'L'
+//		size: char;	'S' or 'L'
 // 
 // Returns:	void
 //
 // History Log:
 //		12/20/05 PB completed v 0.1
+//		01/26/17 JW completed v 1.0
 //   
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void deleteMem(Player players[], char size)
 {
 	{
@@ -183,28 +149,30 @@ void deleteMem(Player players[], char size)
 				delete[] players[whichPlayer].m_gameGrid[1];
 			}
 		}
-		// be sure to check if the memory was allocated (!nullptr) BEFORE deleting
+		// be sure to check if the memory was allocated 
+		//(!nullptr) BEFORE deleting
 	}
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	printShip()
 // Title:	Print Ship 
 // Description:
 //		Print grid element for the proper ship
 // Programmer:	Paul Bladek
+// modified by: Jared Whitney
 // 
-// Date:	9/12/06
+// Date:	01/26/17
 //
-// Version:	1.0
+// Version:	1.01
 // 
-// Environment: Hardware: i3 
-//              Software: OS: Windows 7; 
-//              Compiles under Microsoft Visual C++ 2013
+// Environment: Hardware: i7 
+//              Software: OS: Windows 10; 
+//              Compiles under Microsoft Visual C++ 2015
 //
 // Output:		three characters representing one ship to sout
 //
-// Calls:
+// Calls:	N/A
 //
 // Called By:	printGrid()
 //
@@ -214,9 +182,11 @@ void deleteMem(Player players[], char size)
 // Returns:	void
 //
 // History Log: 
-//		9/12/06 PB comleted v 1.0
+//		9/12/06 PB completed v 1.0
+//		01/26/17 JW completed v 1.01
+//					-removed MISS output and break for MISSED switch
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void printShip(ostream & sout, Ship thisShip)
 {
 	sout << ' ';
@@ -236,30 +206,31 @@ void printShip(ostream & sout, Ship thisShip)
 		break;
 	case HIT: sout << 'H';
 		break;
-	case MISSED: 
+	case MISSED:
 	default: sout << 'X';
 	}
 	sout << VERT;
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	printGrid()
 // Title:	Print Ship 
 // Description:
 //		Print grid element for the proper ship
-// Programmer:
+// Programmer: Paul Bladek
+// modified by: Mike Farrell, Jared Whitney
 // 
-// Date:	12/20/05
+// Date:	01/10/17
 //
-// Version:	0.1
+// Version:	1.0
 // 
-// Environment: Hardware: i3 
-//              Software: OS: Windows 7; 
-//              Compiles under Microsoft Visual C++ 2013
+// Environment: Hardware: i7 
+//              Software: OS: Windows 10; 
+//              Compiles under Microsoft Visual C++ 2015
 //
 // Output:	a single grid to sout
 //
-// Calls:	printShip()
+// Calls:	n/a
 //
 // Called By:	main()
 //		setships()
@@ -273,8 +244,9 @@ void printShip(ostream & sout, Ship thisShip)
 //
 // History Log:
 //		12/20/05 PB completed v 0.1
+//		01/10/17 MF & JW completed v 1.0
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void printGrid(ostream& sout, Ship** grid, char size)
 {
 	int timesThrough = 0;
@@ -315,9 +287,10 @@ void printGrid(ostream& sout, Ship** grid, char size)
 	int alphaChar = 65;
 	for (int i = 0; i < numberOfRows; i++)
 	{
-		sout << (char)alphaChar++ << VERT; //print alpha character at start of every other row
+		sout << (char)alphaChar++ << VERT; 
+		//print alpha character at start of every other row
 
-										   //print out each cell in the grid.
+		//print out each cell in the grid.
 		for (int l = 0; l < numberOfCols; l++)
 		{
 			printShip(sout, grid[i][l]);
@@ -342,16 +315,17 @@ void printGrid(ostream& sout, Ship** grid, char size)
 
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	initializePlayer()
 // Title:	Initialize Player 
 // Description:
-//		sets initial values for m_ships and m_piecesLeft
+//		sets initial values for m_piecesLeft
 // Programmer:	Paul Bladek
+// modified by: Jared Whitney
 // 
-// Date:	9/12/06
+// Date:	01/31/17
 //
-// Version:	1.0
+// Version:	1.01
 // 
 // Environment: Hardware: i3 
 //              Software: OS: Windows 7; 
@@ -366,30 +340,29 @@ void printGrid(ostream& sout, Ship** grid, char size)
 // Returns:	void
 //
 // History Log: 
-//		9/12/06 PB comleted v 1.0
+//		9/12/06 PB completed v 1.0
+//		01/31/17 JW completed v 1.01
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void initializePlayer(Player* playerPtr)
 {
-	for (short i = 0; i < SHIP_SIZE_ARRAYSIZE; i++)
-		setShipInfo(playerPtr->m_ships + i, static_cast<Ship>(i));
-
-
+	for (short j = 0; j < (SHIP_SIZE_ARRAYSIZE); j++)
+		playerPtr->m_ships[j].m_piecesLeft = shipSize[j];
 
 	playerPtr->m_piecesLeft = TOTALPIECES;
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	setships()
 // Title:	Set Ships 
 // Description:
 //		Allows user to put ships in grid
 // Programmer:	Paul Bladek
-// modified by:	
+// modified by:	Mike Farrell, Jared Whitney
 // 
 // Date:	9/12/06
 //
-// Version:	0.5
+// Version:	1.01
 // 
 // Environment: Hardware: i3 
 //              Software: OS: Windows 7; 
@@ -404,7 +377,7 @@ void initializePlayer(Player* playerPtr)
 //		getCoord()
 //		saveGrid()
 //
-// Called By:	main()
+// Called By:	main(), getGrid()
 //
 // Parameters:	players: Player[];	the array of 2 players 
 //		size: char;		'S' or 'L'
@@ -413,9 +386,11 @@ void initializePlayer(Player* playerPtr)
 // Returns:	void
 //
 // History Log: 
-//		9/12/06 PB comleted v 0.5
+//		9/12/06 PB completed v 0.5
+//		01/12/17 MF & JW completed v 1.0
+//		01/27/17 MF completed v 1.01
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void setships(Player players[], char size, short whichPlayer)
 {
 	char input = 'V';
@@ -451,24 +426,20 @@ void setships(Player players[], char size, short whichPlayer)
 
 		location = players[whichPlayer].m_ships[j].m_bowLocation;
 		ship_type = static_cast<Ship>(j);
-		players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = ship_type;
-
-
-		//const int SHIP_SIZE_ARRAYSIZE = 6; // size of the shipSize array
-		//const short shipSize[SHIP_SIZE_ARRAYSIZE] = { 0, 2, 3, 3, 4, 5 };
-		// number of elements for each ship
-		//int inc = j;
-		//shipSize[j] = inc;
+		players[whichPlayer].m_gameGrid[0]
+			[location.m_row][location.m_col] = ship_type;
 
 		for (int i = 0; i < shipSize[j]; i++)
 		{
 			if (input == 'V')
 			{
-				players[whichPlayer].m_gameGrid[0][location.m_row + i][location.m_col] = ship_type;
+				players[whichPlayer].m_gameGrid[0]
+					[location.m_row + i][location.m_col] = ship_type;
 			}
 			else
 			{
-				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
+				players[whichPlayer].m_gameGrid[0]
+					[location.m_row][location.m_col + i] = ship_type;
 			}
 			//i++;
 		}
@@ -505,24 +476,25 @@ void setships(Player players[], char size, short whichPlayer)
 		saveGrid(players, whichPlayer, size);
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	saveGrid()
 // Title:	Save Grid 
 // Description:
 //		Saves the ship grid to a file
-// Programmer:
+// Programmer: Paul Bladek
+// modified by: Jared Whitney
 // 
-// Date:	12/20/05
+// Date:	01/12/17
 //
-// Version:	0.1
+// Version:	1.0
 // 
-// Environment: Hardware: i3 
-//              Software: OS: Windows 7; 
-//              Compiles under Microsoft Visual C++ 2013
+// Environment: Hardware: i7 
+//              Software: OS: Windows 10; 
+//              Compiles under Microsoft Visual C++ 2015
 //
 // Output:	grid to specified file
 //
-// Calls:	printGrid()
+// Calls:	n/a
 //
 // Called By:	setships()
 //
@@ -534,8 +506,9 @@ void setships(Player players[], char size, short whichPlayer)
 //
 // History Log:
 //		12/20/05 PB completed v 0.1
+//		01/12/17 JW completed v 1.0
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void saveGrid(Player players[], short whichPlayer, char size)
 {
 	ofstream out_file_handle;
@@ -552,26 +525,30 @@ void saveGrid(Player players[], short whichPlayer, char size)
 	out_file_handle << (size) << endl;
 	for (short i = 1; i < SHIP_SIZE_ARRAYSIZE; i++)
 	{
-		out_file_handle << players[whichPlayer].m_ships[i].m_orientation << " " <<
-			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_row + '0') << "," <<
-			static_cast<char>(players[whichPlayer].m_ships[i].m_bowLocation.m_col + '0') << endl;
+		out_file_handle << players[whichPlayer].m_ships[i].m_orientation <<
+			" " << static_cast<char>
+			(players[whichPlayer].m_ships[i].m_bowLocation.m_row + '0') <<
+			"," <<
+			static_cast<char>
+			(players[whichPlayer].m_ships[i].m_bowLocation.m_col + '0') <<
+			endl;
 	}
 	out_file_handle << endl;
 	out_file_handle.close();
 
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	getGrid()
 // Title:	GetGrid 
 // Description:
 //		Reads grid from a file and properly sets the ships
 // Programmer:	Paul Bladek
-// modified by:	
+// modified by:	Mike Farrell, Jared Whitney
 // 
-// Date:	9/12/06
+// Date:	01/29/17
 //
-// Version:	0.5
+// Version:	1.02
 // 
 // Environment: Hardware: i3 
 //              Software: OS: Windows 7; 
@@ -581,7 +558,7 @@ void saveGrid(Player players[], short whichPlayer, char size)
 //
 // Output:	prompts to cout
 //
-// Calls:
+// Calls: allocMem(), deleteMem(), setships()
 //
 // Called By:	main()
 //
@@ -594,10 +571,17 @@ void saveGrid(Player players[], short whichPlayer, char size)
 //			false otherwise
 //
 // History Log: 
-//		9/12/06 PB comleted v 0.5
+//		9/12/06 PB completed v 0.5
+//		01/19/17 MF completed v 1.0
+//					-successfully reading from file
+//		01/27/17 MF completed v 1.01
+//					-added name and pieces left to ship structs
+//		01/29/17 JW completed v 1.02
+//					-error handling for allocMem()
 //     
-//---------------------------------------------------------------------------------
-bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
+//----------------------------------------------------------------------------
+bool getGrid(Player players[], short whichPlayer,
+	char& size, string fileName) {
 	string line;
 	ifstream ifs;
 	Ship ship = NOSHIP;
@@ -644,10 +628,13 @@ bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
 		}
 		else
 		{
-			//does not allow the second player to have a larger grid than the first player, due to allocation method
-			//this prompts player 2 to use the setships() function to enter their grid.
+			//does not allow the second player to have a larger 
+			//grid than the first player, due to allocation method.
+			//this prompts player 2 to use the setships() function 
+			//to enter their grid.
 			system("cls");
-			cout << "PLAYER 2 MAY NOT HAVE A LARGER GRID THAN PLAYER 1." << endl;
+			cout << "PLAYER 2 MAY NOT HAVE A LARGER GRID THAN PLAYER 1." <<
+				endl;
 			cout << "Press <enter> to set your ships." << endl;
 			cin.get();
 			setships(players, size, whichPlayer);
@@ -685,17 +672,20 @@ bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
 		players[whichPlayer].m_ships[j].m_bowLocation = location;
 
 		ship_type = static_cast<Ship>(j);
-		players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = ship_type; //break point
+		players[whichPlayer].m_gameGrid[0]
+			[location.m_row][location.m_col] = ship_type; //break point
 
 		for (int i = 0; i < shipSize[j]; i++)
 		{
 			if (input == VERTICAL)
 			{
-				players[whichPlayer].m_gameGrid[0][location.m_row + i][location.m_col] = ship_type;
+				players[whichPlayer].m_gameGrid[0]
+					[location.m_row + i][location.m_col] = ship_type;
 			}
 			else
 			{
-				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col + i] = ship_type;
+				players[whichPlayer].m_gameGrid[0]
+					[location.m_row][location.m_col + i] = ship_type;
 			}
 		}
 		if (j == 1)
@@ -732,7 +722,7 @@ bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
 	return true;
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	getCoord()
 // Title:	Get Coordinates 
 // Description:
@@ -762,9 +752,9 @@ bool getGrid(Player players[], short whichPlayer, char& size, string fileName) {
 // Returns:	Cell location -- a cell containing the input coordinates
 //
 // History Log: 
-//		9/12/06 PB comleted v 1.0
+//		9/12/06 PB completed v 1.0
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 Cell getCoord(istream& sin, char size)
 {
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
@@ -782,7 +772,8 @@ Cell getCoord(istream& sin, char size)
 		{
 			sin.ignore(BUFFER_SIZE, '\n');
 			cout << "Row must be a letter from A to " << highChar
-				<< " and column must be  from 1 to " << numberOfCols << ": ";
+				<< " and column must be  from 1 to " << numberOfCols 
+				<< ": ";
 		}
 		sin >> col;
 		if (!sin)
@@ -795,16 +786,17 @@ Cell getCoord(istream& sin, char size)
 	return location;
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	validLocation()
 // Title:	Valid Location 
 // Description:
 //		Can the ship legitimately go there?
-// Programmer:
+// Programmer: Paul Bladek
+// modified by: Jared Whitney
 // 
-// Date:	12/20/05
+// Date:	01/19/17
 //
-// Version:	0.1
+// Version:	1.0
 // 
 // Environment: Hardware: i3 
 //              Software: OS: Windows 7; 
@@ -825,8 +817,9 @@ Cell getCoord(istream& sin, char size)
 //
 // History Log:
 //		12/20/05 PB completed v 0.1
+//		01/19/17 JW completed v 1.0
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 bool validLocation(const Player& player, short shipNumber, char size)
 {
 	bool r_val = true;
@@ -835,21 +828,25 @@ bool validLocation(const Player& player, short shipNumber, char size)
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
-	if ((player.m_ships[shipNumber].m_orientation == VERTICAL) & (location.m_row <= ((numberOfRows)-shipSize[shipNumber])))
+	if ((player.m_ships[shipNumber].m_orientation == VERTICAL) & 
+		(location.m_row <= ((numberOfRows)-shipSize[shipNumber])))
 	{
 		for (short i = 0; i < shipSize[ship_type]; i++)
 		{
-			if (!player.m_gameGrid[0][location.m_row + i][location.m_col] == NOSHIP)
+			if (!player.m_gameGrid[0]
+				[location.m_row + i][location.m_col] == NOSHIP)
 			{
 				r_val = false;
 			}
 		}
 	}
-	else if ((player.m_ships[shipNumber].m_orientation == HORIZONTAL) & (location.m_col <= ((numberOfCols)-shipSize[shipNumber])))
+	else if ((player.m_ships[shipNumber].m_orientation == HORIZONTAL) & 
+		(location.m_col <= ((numberOfCols)-shipSize[shipNumber])))
 	{
 		for (short i = 0; i < shipSize[ship_type]; i++)
 		{
-			if (!player.m_gameGrid[0][location.m_row][location.m_col + i] == NOSHIP)
+			if (!player.m_gameGrid[0]
+				[location.m_row][location.m_col + i] == NOSHIP)
 			{
 				r_val = false;
 			}
@@ -863,16 +860,17 @@ bool validLocation(const Player& player, short shipNumber, char size)
 	return r_val;
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	header()
 // Title:	header 
 // Description:
 //		Prints opening graphic
 // Programmer:	Paul Bladek
+// modified by: Jared Whitney
 // 
-// Date:	9/12/06
+// Date:	01/10/17
 //
-// Version:	1.0
+// Version:	1.01
 // 
 // Environment: Hardware: i3 
 //              Software: OS: Windows 7; 
@@ -891,25 +889,26 @@ bool validLocation(const Player& player, short shipNumber, char size)
 // Returns:	void
 //
 // History Log: 
-//		9/12/06 PB comleted v 1.0
+//		9/12/06 PB completed v 1.0
+//		01/10/17 JW completed v 1.01
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void header(ostream& sout)
 {
 	const string empty;
 	const string sink("SINK THE FLEET!");
-	// your name goes here!
+	const string group_name("by MFJW");
 	const string by("Edmonds Community College CS 132");
 	boxTop(sout, BOXWIDTH);
 	boxLine(sout, empty, BOXWIDTH);
 	boxLine(sout, sink, BOXWIDTH, 'C');
-	boxLine(sout, empty, BOXWIDTH);
+	boxLine(sout, group_name, BOXWIDTH, 'C');
 	boxLine(sout, by, BOXWIDTH, 'C');
 	boxLine(sout, empty, BOXWIDTH);
 	boxBottom(sout, BOXWIDTH);
 }
 
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // Function:	endBox()
 // Title:	End Box 
 // Description:
@@ -939,7 +938,7 @@ void header(ostream& sout)
 // History Log: 
 //		9/12/06 PB comleted v 1.0
 //     
-//---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void endBox(short player)
 {
 	const string empty;
