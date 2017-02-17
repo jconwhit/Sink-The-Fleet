@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 // File:	fleet.cpp
 // 
 // Functions: 
@@ -287,7 +287,7 @@ void printGrid(ostream& sout, Ship** grid, char size)
 	int alphaChar = 65;
 	for (int i = 0; i < numberOfRows; i++)
 	{
-		sout << (char)alphaChar++ << VERT; 
+		sout << (char)alphaChar++ << VERT;
 		//print alpha character at start of every other row
 
 		//print out each cell in the grid.
@@ -394,82 +394,112 @@ void initializePlayer(Player* playerPtr)
 void setships(Player players[], char size, short whichPlayer)
 {
 	char input = 'V';
+	char shipOK = 'Y';
 	char ok = 'Y';
 	char save = 'N';
 	Ship ship_type;
 	Direction orientation;
 	ostringstream outSStream;
 	Cell location = { 0, 0 };
+
 	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
 	{
-		system("cls");
-		printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
-		outSStream.str("");
-		outSStream << "Player " << whichPlayer + 1 << " Enter "
-			<< shipNames[j] << " orientation";
-		input = safeChoice(outSStream.str(), 'V', 'H');
-		players[whichPlayer].m_ships[j].m_orientation
-			= (input == 'V') ? VERTICAL : HORIZONTAL;
-		orientation = players[whichPlayer].m_ships[j].m_orientation;
-		cout << "Player " << whichPlayer + 1 << " Enter " << shipNames[j] <<
-			" bow coordinates <row letter><col #>: ";
-		players[whichPlayer].m_ships[j].m_bowLocation = getCoord(cin, size);
+		do {
+			system("cls");
+			printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
+			outSStream.str("");
+			outSStream << "Player " << whichPlayer + 1 << " Enter "
+				<< shipNames[j] << " orientation";
+			input = safeChoice(outSStream.str(), 'V', 'H');
+			players[whichPlayer].m_ships[j].m_orientation
+				= (input == 'V') ? VERTICAL : HORIZONTAL;
+			orientation = players[whichPlayer].m_ships[j].m_orientation;
+			cout << "Player " << whichPlayer + 1 << " Enter " << shipNames[j] <<
+				" bow coordinates <row letter><col #>: ";
+			players[whichPlayer].m_ships[j].m_bowLocation = getCoord(cin, size);
 
-		// if ok
-		if (!validLocation(players[whichPlayer], j, size))
-		{
-			cout << "invalid location. Press <enter>";
-			cin.get();
-			j--; // redo
-			continue;
-		}
-
-		location = players[whichPlayer].m_ships[j].m_bowLocation;
-		ship_type = static_cast<Ship>(j);
-		players[whichPlayer].m_gameGrid[0]
-			[location.m_row][location.m_col] = ship_type;
-
-		for (int i = 0; i < shipSize[j]; i++)
-		{
-			if (input == 'V')
+			// if ok
+			if (!validLocation(players[whichPlayer], j, size))
 			{
-				players[whichPlayer].m_gameGrid[0]
-					[location.m_row + i][location.m_col] = ship_type;
+				cout << "invalid location. Press <enter>";
+				cin.get();
+				j--; // redo
+				continue;
 			}
-			else
-			{
-				players[whichPlayer].m_gameGrid[0]
-					[location.m_row][location.m_col + i] = ship_type;
-			}
-			//i++;
-		}
-		if (j == 1)
-		{
-			players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 2;
-		}
-		else if (j == 2)
-		{
-			players[whichPlayer].m_ships[j].m_name = SUB;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
-		}
-		else if (j == 3)
-		{
-			players[whichPlayer].m_ships[j].m_name = FRIGATE;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
-		}
-		else if (j == 4)
-		{
-			players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 4;
-		}
-		else if (j == 5)
-		{
-			players[whichPlayer].m_ships[j].m_name = CARRIER;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 5;
-		}
+			
 
-	} // end for j
+
+			location = players[whichPlayer].m_ships[j].m_bowLocation;
+			ship_type = static_cast<Ship>(j);
+			players[whichPlayer].m_gameGrid[0]
+				[location.m_row][location.m_col] = ship_type;
+
+			for (int i = 0; i < shipSize[j]; i++)
+			{
+				if (input == 'V')
+				{
+					players[whichPlayer].m_gameGrid[0]
+						[location.m_row + i][location.m_col] = ship_type;
+				}
+				else
+				{
+					players[whichPlayer].m_gameGrid[0]
+						[location.m_row][location.m_col + i] = ship_type;
+				}
+				//i++;
+			}
+			system("cls");
+			printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
+			shipOK = safeChoice("Is Ship Position ok?", 'Y', 'N');
+			if (shipOK == 'N')
+			{
+				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = NOSHIP;
+				for (int i = 0; i < shipSize[j]; i++)
+				{
+					if (input == 'V')
+					{
+						players[whichPlayer].m_gameGrid[0]
+							[location.m_row + i][location.m_col] = NOSHIP;
+					}
+					else
+					{
+						players[whichPlayer].m_gameGrid[0]
+							[location.m_row][location.m_col + i] = NOSHIP;
+					}
+					//i++;
+				}
+			}
+			} while (shipOK == 'N');
+
+			if (j == 1)
+			{
+				players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 2;
+			}
+			else if (j == 2)
+			{
+				players[whichPlayer].m_ships[j].m_name = SUB;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+			}
+			else if (j == 3)
+			{
+				players[whichPlayer].m_ships[j].m_name = FRIGATE;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+			}
+			else if (j == 4)
+			{
+				players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 4;
+			}
+			else if (j == 5)
+			{
+				players[whichPlayer].m_ships[j].m_name = CARRIER;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 5;
+			}
+
+		
+		
+	}
 	printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
 	save = safeChoice("\nSave starting grid?", 'Y', 'N');
 	if (save == 'Y')
@@ -772,7 +802,7 @@ Cell getCoord(istream& sin, char size)
 		{
 			sin.ignore(BUFFER_SIZE, '\n');
 			cout << "Row must be a letter from A to " << highChar
-				<< " and column must be  from 1 to " << numberOfCols 
+				<< " and column must be  from 1 to " << numberOfCols
 				<< ": ";
 		}
 		sin >> col;
@@ -828,7 +858,7 @@ bool validLocation(const Player& player, short shipNumber, char size)
 	short numberOfRows = (toupper(size) == 'L') ? LARGEROWS : SMALLROWS;
 	short numberOfCols = (toupper(size) == 'L') ? LARGECOLS : SMALLCOLS;
 
-	if ((player.m_ships[shipNumber].m_orientation == VERTICAL) & 
+	if ((player.m_ships[shipNumber].m_orientation == VERTICAL) &
 		(location.m_row <= ((numberOfRows)-shipSize[shipNumber])))
 	{
 		for (short i = 0; i < shipSize[ship_type]; i++)
@@ -840,7 +870,7 @@ bool validLocation(const Player& player, short shipNumber, char size)
 			}
 		}
 	}
-	else if ((player.m_ships[shipNumber].m_orientation == HORIZONTAL) & 
+	else if ((player.m_ships[shipNumber].m_orientation == HORIZONTAL) &
 		(location.m_col <= ((numberOfCols)-shipSize[shipNumber])))
 	{
 		for (short i = 0; i < shipSize[ship_type]; i++)
