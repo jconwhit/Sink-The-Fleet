@@ -395,9 +395,11 @@ void setships(Player players[], char size, short whichPlayer)
 {
 	char input = 'V';
 	char shipOK = 'Y';
+	char use_ship = 'Y';
 	char ok = 'Y';
 	char save = 'N';
 	Ship ship_type;
+	string use_ship_string;
 	Direction orientation;
 	ostringstream outSStream;
 	Cell location = { 0, 0 };
@@ -406,99 +408,170 @@ void setships(Player players[], char size, short whichPlayer)
 	{
 		do {
 			system("cls");
+			shipOK = 'Y';
 			printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
-			outSStream.str("");
-			outSStream << "Player " << whichPlayer + 1 << " Enter "
-				<< shipNames[j] << " orientation";
-			input = safeChoice(outSStream.str(), 'V', 'H');
-			players[whichPlayer].m_ships[j].m_orientation
-				= (input == 'V') ? VERTICAL : HORIZONTAL;
-			orientation = players[whichPlayer].m_ships[j].m_orientation;
-			cout << "Player " << whichPlayer + 1 << " Enter " << shipNames[j] <<
-				" bow coordinates <row letter><col #>: ";
-			players[whichPlayer].m_ships[j].m_bowLocation = getCoord(cin, size);
-
-			// if ok
-			if (!validLocation(players[whichPlayer], j, size))
+			use_ship_string = shipNames[j];
+			use_ship_string += " ok?";
+			use_ship = safeChoice(use_ship_string, 'Y', 'N');
+			if (use_ship == 'Y')
 			{
-				cout << "invalid location. Press <enter>";
-				cin.get();
-				j--; // redo
-				continue;
-			}
-			
+				outSStream.str("");
+				outSStream << "Player " << whichPlayer + 1 << " Enter "
+					<< shipNames[j] << " orientation";
+				input = safeChoice(outSStream.str(), 'V', 'H');
+				players[whichPlayer].m_ships[j].m_orientation
+					= (input == 'V') ? VERTICAL : HORIZONTAL;
+				orientation = players[whichPlayer].m_ships[j].m_orientation;
+				cout << "Player " << whichPlayer + 1 << " Enter " << shipNames[j] <<
+					" bow coordinates <row letter><col #>: ";
+				players[whichPlayer].m_ships[j].m_bowLocation = getCoord(cin, size);
 
-
-			location = players[whichPlayer].m_ships[j].m_bowLocation;
-			ship_type = static_cast<Ship>(j);
-			players[whichPlayer].m_gameGrid[0]
-				[location.m_row][location.m_col] = ship_type;
-
-			for (int i = 0; i < shipSize[j]; i++)
-			{
-				if (input == 'V')
+				// if ok
+				if (!validLocation(players[whichPlayer], j, size))
 				{
-					players[whichPlayer].m_gameGrid[0]
-						[location.m_row + i][location.m_col] = ship_type;
+					cout << "invalid location. Press <enter>";
+					cin.get();
+					j--; // redo
+					continue;
 				}
-				else
-				{
-					players[whichPlayer].m_gameGrid[0]
-						[location.m_row][location.m_col + i] = ship_type;
-				}
-				//i++;
-			}
-			system("cls");
-			printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
-			shipOK = safeChoice("Is Ship Position ok?", 'Y', 'N');
-			if (shipOK == 'N')
-			{
-				players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = NOSHIP;
+
+
+
+				location = players[whichPlayer].m_ships[j].m_bowLocation;
+				ship_type = static_cast<Ship>(j);
+				players[whichPlayer].m_gameGrid[0]
+					[location.m_row][location.m_col] = ship_type;
+
 				for (int i = 0; i < shipSize[j]; i++)
 				{
 					if (input == 'V')
 					{
 						players[whichPlayer].m_gameGrid[0]
-							[location.m_row + i][location.m_col] = NOSHIP;
+							[location.m_row + i][location.m_col] = ship_type;
 					}
 					else
 					{
 						players[whichPlayer].m_gameGrid[0]
-							[location.m_row][location.m_col + i] = NOSHIP;
+							[location.m_row][location.m_col + i] = ship_type;
 					}
 					//i++;
 				}
+				system("cls");
+				printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
+				shipOK = safeChoice("Is Ship Position ok?", 'Y', 'N');
+				if (shipOK == 'N')
+				{
+					players[whichPlayer].m_gameGrid[0][location.m_row][location.m_col] = NOSHIP;
+					for (int i = 0; i < shipSize[j]; i++)
+					{
+						if (input == 'V')
+						{
+							players[whichPlayer].m_gameGrid[0]
+								[location.m_row + i][location.m_col] = NOSHIP;
+						}
+						else
+						{
+							players[whichPlayer].m_gameGrid[0]
+								[location.m_row][location.m_col + i] = NOSHIP;
+						}
+						//i++;
+					}
+				}
+			}//end of if(use_ship == Y)
+			else
+			{
+				cout << "Not using [" << shipNames[j] << "]. Press <enter> to continue.." << endl;
+				cin.get();
 			}
-			} while (shipOK == 'N');
+		} while (shipOK == 'N');
 
-			if (j == 1)
+		players[whichPlayer].m_ships[j].m_name = static_cast<Ship>(j);
+		if (use_ship == 'Y')
+		{
+			players[whichPlayer].m_ships[j].m_piecesLeft = shipSize[j];
+		}
+		else
+		{
+			players[whichPlayer].m_ships[j].m_orientation = VERTICAL;
+			players[whichPlayer].m_ships[j].m_bowLocation.m_row = -1;
+			players[whichPlayer].m_ships[j].m_bowLocation.m_col = -1;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+			players[whichPlayer].m_piecesLeft -= shipSize[j];
+		}
+
+		/*if (j == 1)
+		{
+			if (use_ship == 'Y')
 			{
 				players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
 				players[whichPlayer].m_ships[j].m_piecesLeft = 2;
 			}
-			else if (j == 2)
+			else
+			{
+				players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+				players[whichPlayer].m_piecesLeft -= shipSize[j];
+			}
+		}
+		else if (j == 2)
+		{
+			if (use_ship == 'Y')
 			{
 				players[whichPlayer].m_ships[j].m_name = SUB;
 				players[whichPlayer].m_ships[j].m_piecesLeft = 3;
 			}
-			else if (j == 3)
+			else
+			{
+				players[whichPlayer].m_ships[j].m_name = SUB;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+				players[whichPlayer].m_piecesLeft -= shipSize[j];
+			}
+		}
+		else if (j == 3)
+		{
+			if (use_ship == 'Y')
 			{
 				players[whichPlayer].m_ships[j].m_name = FRIGATE;
 				players[whichPlayer].m_ships[j].m_piecesLeft = 3;
 			}
-			else if (j == 4)
+			else
+			{
+				players[whichPlayer].m_ships[j].m_name = FRIGATE;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+				players[whichPlayer].m_piecesLeft -= shipSize[j];
+			}
+		}
+		else if (j == 4)
+		{
+			if (use_ship == 'Y')
 			{
 				players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
 				players[whichPlayer].m_ships[j].m_piecesLeft = 4;
 			}
-			else if (j == 5)
+			else
+			{
+				players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+				players[whichPlayer].m_piecesLeft -= shipSize[j];
+			}
+		}
+		else if (j == 5)
+		{
+			if (use_ship == 'Y')
 			{
 				players[whichPlayer].m_ships[j].m_name = CARRIER;
 				players[whichPlayer].m_ships[j].m_piecesLeft = 5;
 			}
+			else
+			{
+				players[whichPlayer].m_ships[j].m_name = CARRIER;
+				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+				players[whichPlayer].m_piecesLeft -= shipSize[j];
+			}
+		}*/
 
-		
-		
+
+
 	}
 	printGrid(cout, players[whichPlayer].m_gameGrid[0], size);
 	save = safeChoice("\nSave starting grid?", 'Y', 'N');
@@ -616,6 +689,7 @@ bool getGrid(Player players[], short whichPlayer,
 	ifstream ifs;
 	Ship ship = NOSHIP;
 	char fsize = 'S';
+	char use_ship = 'Y';
 	Direction input = VERTICAL;
 	short too_high = 0;
 	unsigned short row = 0;
@@ -678,6 +752,7 @@ bool getGrid(Player players[], short whichPlayer,
 
 	for (short j = 1; j < SHIP_SIZE_ARRAYSIZE; j++)
 	{
+		use_ship = 'Y';
 		location.m_col = 0;
 		location.m_row = 0;
 		//too_high = 0;
@@ -686,62 +761,61 @@ bool getGrid(Player players[], short whichPlayer,
 		players[whichPlayer].m_ships[j].m_orientation
 			= (input == 1) ? VERTICAL : HORIZONTAL;
 
-		row = (line.at(2) - '0');
-		col = (line.at(4) - '0');
-		if (!(((row - '0') < numberOfRows) & ((col - '0') < numberOfCols)))
+		row = (line.at(2));
+		col = (line.at(4));
+
+		if (((row - '0') < (-1)) || ((row - '0') > numberOfRows) || 
+			((col - '0') < (-1)) || ((col - '0') > numberOfCols))
 		{
-			cout << "Dimension bound error.." << endl;
-			//too_high = 1;
-			cin.get();
+			cout << "[" << shipNames[j] << "] is out of bounds. " << 
+				"This ship will not be loaded." << endl;
 			continue;
 		}
+		
 
+		//call validLocation()
 
-		location.m_col = col;
-		location.m_row = row;
-		players[whichPlayer].m_ships[j].m_bowLocation = location;
-
-		ship_type = static_cast<Ship>(j);
-		players[whichPlayer].m_gameGrid[0]
-			[location.m_row][location.m_col] = ship_type; //break point
-
-		for (int i = 0; i < shipSize[j]; i++)
+		if ((row == '/') || (col == '/'))
 		{
-			if (input == VERTICAL)
+			use_ship = 'N';
+		}
+		else
+		{
+			row -= '0';
+			col -= '0';
+			location.m_col = col;
+			location.m_row = row;
+			players[whichPlayer].m_ships[j].m_bowLocation = location;
+
+			ship_type = static_cast<Ship>(j);
+			players[whichPlayer].m_gameGrid[0]
+				[location.m_row][location.m_col] = ship_type; //break point
+		}
+
+
+		players[whichPlayer].m_ships[j].m_name = static_cast<Ship>(j);
+		if (use_ship == 'Y')
+		{
+			for (int i = 0; i < shipSize[j]; i++)
 			{
-				players[whichPlayer].m_gameGrid[0]
-					[location.m_row + i][location.m_col] = ship_type;
+				if (input == VERTICAL)
+				{
+					players[whichPlayer].m_gameGrid[0]
+						[location.m_row + i][location.m_col] = ship_type;
+				}
+				else
+				{
+					players[whichPlayer].m_gameGrid[0]
+						[location.m_row][location.m_col + i] = ship_type;
+				}
 			}
-			else
-			{
-				players[whichPlayer].m_gameGrid[0]
-					[location.m_row][location.m_col + i] = ship_type;
-			}
+			players[whichPlayer].m_ships[j].m_piecesLeft = shipSize[j];
 		}
-		if (j == 1)
+		else
 		{
-			players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 2;
-		}
-		else if (j == 2)
-		{
-			players[whichPlayer].m_ships[j].m_name = SUB;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
-		}
-		else if (j == 3)
-		{
-			players[whichPlayer].m_ships[j].m_name = FRIGATE;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 3;
-		}
-		else if (j == 4)
-		{
-			players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 4;
-		}
-		else if (j == 5)
-		{
-			players[whichPlayer].m_ships[j].m_name = CARRIER;
-			players[whichPlayer].m_ships[j].m_piecesLeft = 5;
+			cout << "File does not contain [" << shipNames[j] << "] " << endl;
+			players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+			players[whichPlayer].m_piecesLeft -= shipSize[j];
 		}
 
 	} // end for j
@@ -749,6 +823,8 @@ bool getGrid(Player players[], short whichPlayer,
 	  /*save = safeChoice("\nSave starting grid?", 'Y', 'N');
 	  if (save == 'Y')
 	  saveGrid(players, whichPlayer, fsize);*/
+	cout << endl << "Successfully loaded save file." << endl << "Press <enter> to continue.." << endl;
+	cin.get();
 	return true;
 }
 

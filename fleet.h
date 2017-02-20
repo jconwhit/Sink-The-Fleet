@@ -38,8 +38,8 @@ const short BOXWIDTH = 79;	// maximum screen line length
 
 
 const int SHIP_SIZE_ARRAYSIZE = 6; // size of the shipSize array
-const short shipSize[SHIP_SIZE_ARRAYSIZE] = {0, 2, 3, 3, 4, 5}; 
-	// number of elements for each ship
+const short shipSize[SHIP_SIZE_ARRAYSIZE] = { 0, 2, 3, 3, 4, 5 };
+// number of elements for each ship
 
 //----------------------------------------------------------------------------
 // enumerated type for ships
@@ -54,7 +54,7 @@ enum Ship
 	CARRIER,	 // 5
 	HIT,		 // 6 (6-7)-- used only for other side
 	MISSED,		 // 7 
-}; 
+};
 
 //----------------------------------------------------------------------------
 // enumerated type for direction on grid
@@ -73,7 +73,7 @@ struct Cell
 {
 	unsigned short m_row;	// row
 	unsigned short m_col;	// column
-}; 
+};
 
 //----------------------------------------------------------------------------
 // needed info about each ship
@@ -106,7 +106,7 @@ struct Player
 void printShip(ostream & sout, Ship thisShip);
 
 //  prints a specific game grid
-void printGrid(ostream& sout, Ship** grid, char size); 
+void printGrid(ostream& sout, Ship** grid, char size);
 
 
 //----------------------------------------------------------------------------
@@ -125,7 +125,7 @@ void deleteMem(Player players[], char size);
 void saveGrid(Player players[], short whichPlayer, char size);
 
 // reads grid from a file	
-bool getGrid(Player players[], short whichPlayer, 
+bool getGrid(Player players[], short whichPlayer,
 	char& size, string fileName);
 
 // allows user to put ships in grid
@@ -136,7 +136,7 @@ Cell getCoord(istream& sin, char size);
 
 // can the ship go there?
 bool validLocation(const Player& player, short shipNumber, char size);
-	
+
 // ...
 //----------------------------------------------------------------------------
 // other function prototypes
@@ -144,6 +144,6 @@ bool validLocation(const Player& player, short shipNumber, char size);
 // prints opening graphic
 void header(ostream& sout);
 // prints closinging graphic
-void endBox(short player);		
+void endBox(short player);
 // your headers go here ...
 #endif
