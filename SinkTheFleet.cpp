@@ -98,7 +98,7 @@ int main(void)
 		{
 			if (whichPlayer == 0)
 			{
-				filename = "Player 1.txt";
+				
 				system("cls");
 				header(cout);
 				readFromFileChoice =
@@ -110,8 +110,10 @@ int main(void)
 				}
 				else if (readFromFileChoice == 'Y')
 				{
-					cout << "Reading from file..." << endl << endl;
-					getGrid(game, whichPlayer, gridSize, filename);
+					do {
+						cout << "Please Enter Filename: ";
+						cin >> filename;
+					} while (getGrid(game, whichPlayer, gridSize, filename) == false);
 					printGrid(cout, game[whichPlayer].m_gameGrid[0], gridSize);
 					cout << "Press <enter> to continue.." << endl;
 					cin.get();
@@ -119,7 +121,6 @@ int main(void)
 			}
 			else if (whichPlayer == 1)
 			{
-				filename = "Player 2.txt";
 				system("cls");
 				header(cout);
 				readFromFileChoice =
@@ -131,7 +132,10 @@ int main(void)
 				}
 				else if (readFromFileChoice == 'Y')
 				{
-					cout << "Reading from file..." << endl << endl;
+					do {
+						cout << "Please Enter Filename: ";
+						cin >> filename;
+					} while (getGrid(game, whichPlayer, gridSize, filename) == false);
 					getGrid(game, whichPlayer, gridSize, filename);
 					printGrid(cout, game[whichPlayer].m_gameGrid[0],
 						gridSize);
