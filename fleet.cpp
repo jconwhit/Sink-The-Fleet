@@ -501,73 +501,73 @@ void setships(Player players[], char size, short whichPlayer)
 
 		/*if (j == 1)
 		{
-			if (use_ship == 'Y')
-			{
-				players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 2;
-			}
-			else
-			{
-				players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
-				players[whichPlayer].m_piecesLeft -= shipSize[j];
-			}
+		if (use_ship == 'Y')
+		{
+		players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 2;
+		}
+		else
+		{
+		players[whichPlayer].m_ships[j].m_name = MINESWEEPER;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+		players[whichPlayer].m_piecesLeft -= shipSize[j];
+		}
 		}
 		else if (j == 2)
 		{
-			if (use_ship == 'Y')
-			{
-				players[whichPlayer].m_ships[j].m_name = SUB;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 3;
-			}
-			else
-			{
-				players[whichPlayer].m_ships[j].m_name = SUB;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
-				players[whichPlayer].m_piecesLeft -= shipSize[j];
-			}
+		if (use_ship == 'Y')
+		{
+		players[whichPlayer].m_ships[j].m_name = SUB;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+		}
+		else
+		{
+		players[whichPlayer].m_ships[j].m_name = SUB;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+		players[whichPlayer].m_piecesLeft -= shipSize[j];
+		}
 		}
 		else if (j == 3)
 		{
-			if (use_ship == 'Y')
-			{
-				players[whichPlayer].m_ships[j].m_name = FRIGATE;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 3;
-			}
-			else
-			{
-				players[whichPlayer].m_ships[j].m_name = FRIGATE;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
-				players[whichPlayer].m_piecesLeft -= shipSize[j];
-			}
+		if (use_ship == 'Y')
+		{
+		players[whichPlayer].m_ships[j].m_name = FRIGATE;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 3;
+		}
+		else
+		{
+		players[whichPlayer].m_ships[j].m_name = FRIGATE;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+		players[whichPlayer].m_piecesLeft -= shipSize[j];
+		}
 		}
 		else if (j == 4)
 		{
-			if (use_ship == 'Y')
-			{
-				players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 4;
-			}
-			else
-			{
-				players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
-				players[whichPlayer].m_piecesLeft -= shipSize[j];
-			}
+		if (use_ship == 'Y')
+		{
+		players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 4;
+		}
+		else
+		{
+		players[whichPlayer].m_ships[j].m_name = BATTLESHIP;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+		players[whichPlayer].m_piecesLeft -= shipSize[j];
+		}
 		}
 		else if (j == 5)
 		{
-			if (use_ship == 'Y')
-			{
-				players[whichPlayer].m_ships[j].m_name = CARRIER;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 5;
-			}
-			else
-			{
-				players[whichPlayer].m_ships[j].m_name = CARRIER;
-				players[whichPlayer].m_ships[j].m_piecesLeft = 0;
-				players[whichPlayer].m_piecesLeft -= shipSize[j];
-			}
+		if (use_ship == 'Y')
+		{
+		players[whichPlayer].m_ships[j].m_name = CARRIER;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 5;
+		}
+		else
+		{
+		players[whichPlayer].m_ships[j].m_name = CARRIER;
+		players[whichPlayer].m_ships[j].m_piecesLeft = 0;
+		players[whichPlayer].m_piecesLeft -= shipSize[j];
+		}
 		}*/
 
 
@@ -620,8 +620,10 @@ void saveGrid(Player players[], short whichPlayer, char size)
 
 	char which_player;
 	which_player = (static_cast<char>(whichPlayer + '0')) + 1;
-	char filename[13] = { "Player _.txt" };
-	filename[7] = which_player;
+	char filename[FILENAME_MAX] = "default.txt";
+	//filename[7] = which_player;
+	cin >> filename;
+
 
 
 	out_file_handle.open(filename);
@@ -764,14 +766,14 @@ bool getGrid(Player players[], short whichPlayer,
 		row = (line.at(2));
 		col = (line.at(4));
 
-		if (((row - '0') < (-1)) || ((row - '0') > numberOfRows) || 
+		if (((row - '0') < (-1)) || ((row - '0') > numberOfRows) ||
 			((col - '0') < (-1)) || ((col - '0') > numberOfCols))
 		{
-			cout << "[" << shipNames[j] << "] is out of bounds. " << 
+			cout << "[" << shipNames[j] << "] is out of bounds. " <<
 				"This ship will not be loaded." << endl;
 			continue;
 		}
-		
+
 
 		//call validLocation()
 
